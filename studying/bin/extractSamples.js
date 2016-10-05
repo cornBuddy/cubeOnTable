@@ -14,9 +14,10 @@ function extractImages(pathToVideo, outputDir, offset=5) {
     video.read((err, mat) => {
       if (err) throw err;
       i++;
-      console.log(pathToVideo, outputDir);
-      if (iter % offset === 0)
-        mat.save(path.join(outputDir, `img_${iter}.jpg`));
+      if (i % offset === 0) {
+        mat.save(path.join(outputDir, `img_${i}.jpg`));
+        console.log(path.join(outputDir, `img_${i}.jpg`));
+      }
       iter();
     });
   };
