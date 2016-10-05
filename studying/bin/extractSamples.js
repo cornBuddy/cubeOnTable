@@ -17,7 +17,6 @@ function extractImages(pathToVideo, outputDir) {
       if (video.getFrameCount() < i)
         return;
       mat.save(path.join(outputDir, `img_${i}.jpg`));
-      console.log(path.join(outputDir, `img_${i}.jpg`));
       iter();
     });
   };

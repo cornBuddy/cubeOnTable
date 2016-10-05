@@ -13,7 +13,7 @@ try {
 } catch (_) {
   console.log('nothing to remove from ./{positive,negative,samples}/*');
 }
-exec('bin/extractSamples.js');
+exec('bin/extractSamples.js 2> extracting.err.log 1> extracting.log');
 exec('find ./negative/ -name "*.jpg" > negative.dat');
 exec('find ./positive/ -name "*.jpg" > positive.dat');
 exec(`perl bin/createsamples.pl positive.dat negative.dat samples`
