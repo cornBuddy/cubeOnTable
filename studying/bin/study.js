@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const exec = require('child_process').execSync;
 
-const POSITIVE_SAMPLES_COUNT = 6000;
+const POSITIVE_SAMPLES_COUNT = 7000;
 const WIDTH = 24;
 const HEIGTH = 24;
 const BUF_SIZE = 1024;
@@ -23,13 +23,13 @@ exec(`perl bin/createsamples.pl positive.dat negative.dat samples`
   + ` 2> samples.err.log 1> samples.log`);
 exec('python tools/mergevec.py -v samples/ -o samples.vec');
 const numNeg = parseInt(exec('ls negative/ | wc -l'));
-const numPos = Math.floor(POSITIVE_SAMPLES_COUNT
-  + (NUM_STAGES - 1) * (1 - MIN_HIT_RATE)
-  * POSITIVE_SAMPLES_COUNT + numNeg);
+const numPos = Math.floor(
+  (POSITIVE_SAMPLES_COUNT - numNeg)
+  / (1 + (NUM_STAGES - 1) * (1 - MIN_HIT_RATE)));
 exec(`opencv_traincascade -data classifier -vec samples.vec`
   + ` -bg negative.dat -numStages ${NUM_STAGES} -minHitRate ${MIN_HIT_RATE}`
   + ` -maxFalseAlarmRate 0.5`
   + ` -numPos ${numPos} -numNeg ${numNeg}`
-  + ` -w ${WIDTH} -h ${HEIGHT} -mode ALL`
+  + ` -w ${WIDTH} -h ${HEIGTH} -mode ALL`
   + ` -precalcValBufSize ${BUF_SIZE} -precalcIdxBufSize ${BUF_SIZE}`
   + ` 2> study.err.log 1> study.log`);
