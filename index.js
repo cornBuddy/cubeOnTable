@@ -1,10 +1,9 @@
 const cv = require('opencv');
 
-const CASCADE = './node_modules/opencv/data/haarcascade_frontalface_alt2.xml';
+const CASCADE = cv.FACE_CASCADE;
 const CAM_HEIGHT = 240;
 const CAM_WIDTH = 320;
-const CAM_FPS = 10;
-const CAM_INTERVAL = 1000 / CAM_FPS;
+const MAGIC_NUMBER = 200;
 
 function detectObjectsFromCamera(camera, window) {
   return function() {
@@ -18,7 +17,7 @@ function detectObjectsFromCamera(camera, window) {
           im.rectangle([obj.x, obj.y], [obj.width, obj.height]);
         }
         window.show(im);
-        window.blockingWaitKey(0, CAM_FPS);
+        window.blockingWaitKey(0, MAGIC_NUMBER);
       });
     });
   }
@@ -29,7 +28,7 @@ try {
   const camera = new cv.VideoCapture(0);
   camera.setWidth(CAM_WIDTH);
   camera.setHeight(CAM_HEIGHT);
-  setInterval(detectObjectsFromCamera(camera, window), CAM_INTERVAL);
+  setInterval(detectObjectsFromCamera(camera, window), MAGIC_NUMBER);
 } catch (e){
   console.log("Couldn't start camera:", e)
 }
