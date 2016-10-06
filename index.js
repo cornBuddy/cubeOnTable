@@ -24,7 +24,7 @@ function detectObjectsFromCamera(camera, window) {
 }
 
 try {
-  const window = new cv.NamedWindow('Video', 0);
+  const window = new cv.NamedWindow('Video', cv.WINDOW_AUTOSIZE);
   const camera = new cv.VideoCapture(0);
   camera.setWidth(CAM_WIDTH);
   camera.setHeight(CAM_HEIGHT);
