@@ -1,3 +1,4 @@
+// TODO: fix segmentation fault error
 const cv = require('opencv');
 
 const CASCADE = cv.FACE_CASCADE;
