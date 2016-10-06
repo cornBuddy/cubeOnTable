@@ -14,7 +14,7 @@ function detectObjectsFromCamera(camera, window) {
         if (err) throw err;
         for (let i = 0; i < objects.length; i++) {
           const obj = objects[i];
-          console.log(`obj[${i}] = ${obj}`);
+          console.log(`obj[${i}] = [${obj.x}, ${obj.y}]`);
           im.rectangle([obj.x, obj.y], [obj.width, obj.height]);
         }
         window.show(im);
