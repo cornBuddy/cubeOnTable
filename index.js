@@ -1,4 +1,11 @@
 // TODO: fix segmentation fault error
+
+// 1 find table on image
+// 2 crop image; cropped part should contain only table and few pixels around it
+// 3 filter image; find contours of image using canny algorithm
+// 4 on cropped part find the biggest rectangle
+// 5 draw cube on it
+
 const cv = require('opencv');
 
 const CAM_HEIGHT = 180;
