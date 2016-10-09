@@ -5,6 +5,7 @@
 // 3 filter image; find contours of image using canny algorithm
 // 4 on cropped part find the biggest rectangle
 // 5 draw cube on it
+//  how should it find table on uncropped image?
 
 const cv = require('opencv');
 
@@ -19,16 +20,31 @@ function transformImage(image) {
   return copy;
 }
 
+function crop(image, object) {
+  // TODO: fix cropping
+  const minus10perc = (n) => (Math.floor(n - n * 0.2));
+  const plus10perc = (n) => (Math.floor(n + n * 0.2));
+  const croppedX = minus10perc(object.x) >= 0
+    ? minus10perc(object.x)
+    : 0;
+  const croppedY = plus10perc(object.y);
+  const croppedHeight = plus10perc(object.height);
+  const croppedWidth = plus10perc(object.width);
+  return image.crop(croppedX, croppedY, croppedHeight, croppedWidth);
+}
+
 function detectObjectsFromCamera(camera, window) {
   return function() {
     camera.read((err, im) => {
       if (err) throw err;
-      const transformed = transformImage(im);
+      let transformed = transformImage(im);
       transformed.detectObject(cv.FACE_CASCADE, {}, (err, objects) => {
         if (err) throw err;
         const face = objects[0];
-        if (face)
+        if (face) {
           transformed.rectangle([face.x, face.y], [face.width, face.height]);
+          transformed = crop(transformed, face);
+        }
         else
           console.log('there are no faces');
         window.show(transformed);
