@@ -11,11 +11,11 @@ function detectObjectsFromCamera(camera, window) {
       if (err) throw err;
       im.detectObject(cv.FACE_CASCADE, {}, (err, objects) => {
         if (err) throw err;
-        for (let i = 0; i < objects.length; i++) {
-          const obj = objects[i];
-          console.log(`obj[${i}] = [${obj.x}, ${obj.y}]`);
-          im.rectangle([obj.x, obj.y], [obj.width, obj.height]);
-        }
+        const face = objects[0];
+        if (face)
+          im.rectangle([face.x, face.y], [face.width, face.height]);
+        else
+          console.log('there are no faces');
         window.show(im);
         window.blockingWaitKey(0, MAGIC_NUMBER);
       });
