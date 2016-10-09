@@ -5,19 +5,26 @@ const CAM_HEIGHT = 180;
 const CAM_WIDTH = 320;
 const MAGIC_NUMBER = 200;
 
+function transformImage(image) {
+  // TODO: correct copy image
+  image.cvtColor('CV_YCrCb2BGR');
+  image.cvtColor('CV_BGR2GRAY');
+  image.medianBlur(5);
+  return image;
+}
+
 function detectObjectsFromCamera(camera, window) {
   return function() {
     camera.read((err, im) => {
       if (err) throw err;
-      im.detectObject(cv.FACE_CASCADE, {}, (err, objects) => {
+      const transformed = transformImage(im);
+      transformed.detectObject(cv.FACE_CASCADE, {}, (err, objects) => {
         if (err) throw err;
         const face = objects[0];
         if (face)
           im.rectangle([face.x, face.y], [face.width, face.height]);
         else
           console.log('there are no faces');
-        im.cvtColor('CV_YCrCb2BGR');
-        im.cvtColor('CV_BGR2GRAY');
         window.show(im);
         window.blockingWaitKey(0, MAGIC_NUMBER);
       });
