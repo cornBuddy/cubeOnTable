@@ -16,6 +16,8 @@ function detectObjectsFromCamera(camera, window) {
           im.rectangle([face.x, face.y], [face.width, face.height]);
         else
           console.log('there are no faces');
+        im.cvtColor('CV_YCrCb2BGR');
+        im.cvtColor('CV_BGR2GRAY');
         window.show(im);
         window.blockingWaitKey(0, MAGIC_NUMBER);
       });
