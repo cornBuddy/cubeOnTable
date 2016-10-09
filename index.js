@@ -6,11 +6,11 @@ const CAM_WIDTH = 320;
 const MAGIC_NUMBER = 200;
 
 function transformImage(image) {
-  // TODO: correct copy image
-  image.cvtColor('CV_YCrCb2BGR');
-  image.cvtColor('CV_BGR2GRAY');
-  image.medianBlur(5);
-  return image;
+  const copy = image.clone();
+  copy.cvtColor('CV_YCrCb2BGR');
+  copy.cvtColor('CV_BGR2GRAY');
+  copy.medianBlur(5);
+  return copy;
 }
 
 function detectObjectsFromCamera(camera, window) {
@@ -22,7 +22,7 @@ function detectObjectsFromCamera(camera, window) {
         if (err) throw err;
         const face = objects[0];
         if (face)
-          im.rectangle([face.x, face.y], [face.width, face.height]);
+          transformed.rectangle([face.x, face.y], [face.width, face.height]);
         else
           console.log('there are no faces');
         window.show(transformed);
