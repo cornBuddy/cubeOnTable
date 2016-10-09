@@ -1,7 +1,7 @@
 // TODO: fix segmentation fault error
 const cv = require('opencv');
 
-const CAM_HEIGHT = 240;
+const CAM_HEIGHT = 180;
 const CAM_WIDTH = 320;
 const MAGIC_NUMBER = 200;
 
