@@ -7,8 +7,7 @@ const MAGIC_NUMBER = 200;
 
 function transformImage(image) {
   const copy = image.clone();
-  copy.cvtColor('CV_YCrCb2BGR');
-  copy.cvtColor('CV_BGR2GRAY');
+  copy.convertGrayscale();
   copy.medianBlur(5);
   return copy;
 }
