@@ -26,7 +26,8 @@ function detectObjectsFromCamera(camera, window) {
         else
           console.log('there are no faces');
         window.show(transformed);
-        window.blockingWaitKey(0, MAGIC_NUMBER);
+        if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
+          process.exit(0);
       });
     });
   }
