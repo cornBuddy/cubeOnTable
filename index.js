@@ -25,7 +25,7 @@ function detectObjectsFromCamera(camera, window) {
           im.rectangle([face.x, face.y], [face.width, face.height]);
         else
           console.log('there are no faces');
-        window.show(im);
+        window.show(transformed);
         window.blockingWaitKey(0, MAGIC_NUMBER);
       });
     });
