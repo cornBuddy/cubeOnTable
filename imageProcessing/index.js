@@ -21,5 +21,10 @@ function crop(image, object) {
   return image.crop(croppedX, croppedY, croppedHeight, croppedWidth);
 }
 
+function findBiggestRectangle(image) {
+  return null;
+}
+
 module.exports.transformImage = transformImage;
 module.exports.crop = crop;
+module.exports.findBiggestRectangle = findBiggestRectangle;
