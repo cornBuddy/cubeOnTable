@@ -10,6 +10,7 @@ const crop = require('./imageProcessing').crop;
 // 4 on cropped part find the biggest rectangle
 // 5 draw cube on it
 //  how should it find table on uncropped image?
+//  do i really need to crop image?
 
 const CAM_HEIGHT = 180;
 const CAM_WIDTH = 320;
