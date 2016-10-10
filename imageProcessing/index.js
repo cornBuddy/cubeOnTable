@@ -19,9 +19,22 @@ function crop(image, object) {
 }
 
 function findBiggestRectangle(image) {
-  return null;
+  const transformed = transformImage(image);
+  const countours = transformed.findCountours();
+  if (countours.size() === 0)
+    return null;
+  let currentBiggest = 0;
+  for (let c = 0; i < countours.size(); c++) {
+    if (countours.cornerCount(c) !== 4)
+      continue;
+    if (countours.area(currentBiggest) < countours.area(c))
+      currentBiggest = c;
+  }
+  let rect = [];
+  for (let i = 0; i < 4; i++)
+    rect.push(countours.point(currentBiggest, i));
+  return rect;
 }
 
-module.exports.transformImage = transformImage;
 module.exports.crop = crop;
 module.exports.findBiggestRectangle = findBiggestRectangle;
