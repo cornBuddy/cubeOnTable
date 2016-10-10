@@ -1,9 +1,6 @@
 const cv = require('opencv');
 
-const transformImage = require('./imageProcessing').transformImage;
 const crop = require('./imageProcessing').crop;
-const findBiggestRectangle
-  = require('./imageProcessing').findBiggestRectangle;
 
 // TODO: fix segmentation fault error
 
