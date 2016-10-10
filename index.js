@@ -1,3 +1,8 @@
+const cv = require('opencv');
+
+const transformImage = require('./imageProcessing').transformImage;
+const crop = require('./imageProcessing').crop;
+
 // TODO: fix segmentation fault error
 
 // 1 find table on image
@@ -7,34 +12,9 @@
 // 5 draw cube on it
 //  how should it find table on uncropped image?
 
-const cv = require('opencv');
-
 const CAM_HEIGHT = 180;
 const CAM_WIDTH = 320;
 const MAGIC_NUMBER = 200;
-
-function transformImage(image) {
-  const copy = image.clone();
-  copy.convertGrayscale();
-  copy.medianBlur(5);
-  copy.canny(0, 100);
-  copy.dilate(2);
-  return copy;
-}
-
-function crop(image, object) {
-  const minus10perc = (n) => (Math.floor(n - n * 0.1));
-  const plus20perc = (n) => (Math.floor(n + n * 0.2));
-  const croppedX = minus10perc(object.x) >= 0
-    ? minus10perc(object.x)
-    : 0;
-  const croppedY = minus10perc(object.y) >= 0
-    ? minus10perc(object.y)
-    : 0;
-  const croppedHeight = plus20perc(object.height);
-  const croppedWidth = plus20perc(object.width);
-  return image.crop(croppedX, croppedY, croppedHeight, croppedWidth);
-}
 
 function detectObjectsFromCamera(camera, window) {
   return function() {
