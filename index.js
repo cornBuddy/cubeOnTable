@@ -18,27 +18,30 @@ const CAM_HEIGHT = 180;
 const CAM_WIDTH = 320;
 const MAGIC_NUMBER = 200;
 
-function cropAndShow(rawImage, camera, window) {
-  return function (err, objects) {
+function cropFaceAndShow(rawImage, camera, window) {
+  const cb = (err, objects) => {
     if (err) throw err;
     const obj = objects[0];
     if (obj)
       window.show(crop(rawImage, obj));
     else
-      console.log('there are no objects');
+      console.log('there are no faces');
     if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
       process.exit(0);
-  }
+  };
+  rawImage.detectObject(cv.FACE_CASCADE, {}, cb);
+}
+
+function findRectangleAndShow(rawImage, camera, window) {
+
 }
 
 function detectObjectsFromCamera(camera, window, cascade) {
-  return function() {
+  return function () {
     camera.read((err, rawImage) => {
       if (err) throw err;
-      const cb = cascade
-        ? cropAndShow(rawImage, camera, window)
-        : null;
-      rawImage.detectObject(cascade, {}, cb);
+      if (cascade === cv.FACE_CASCADE)
+        cropFaceAndShow(rawImage, camera, window);
     });
   }
 }
