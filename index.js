@@ -18,7 +18,7 @@ const CAM_HEIGHT = 180;
 const CAM_WIDTH = 320;
 const MAGIC_NUMBER = 200;
 
-function cropFaceAndShow(rawImage, camera, window) {
+function cropFaceAndShow(rawImage, window) {
   const cb = (err, objects) => {
     if (err) throw err;
     const obj = objects[0];
@@ -32,16 +32,15 @@ function cropFaceAndShow(rawImage, camera, window) {
   rawImage.detectObject(cv.FACE_CASCADE, {}, cb);
 }
 
-function findRectangleAndShow(rawImage, camera, window) {
-
-}
-
 function detectObjectsFromCamera(camera, window, cascade) {
   return function () {
     camera.read((err, rawImage) => {
       if (err) throw err;
+      // TODO: remove if here to improve speed
       if (cascade === cv.FACE_CASCADE)
-        cropFaceAndShow(rawImage, camera, window);
+        cropFaceAndShow(rawImage, window);
+      else
+        findRectangleAndShow(rawImage, window);
     });
   }
 }
