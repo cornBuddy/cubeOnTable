@@ -8,14 +8,11 @@ function transformImage(image) {
 }
 
 function crop(image, object) {
+  // TODO: fix assertion fail somewhere here
   const minus10perc = (n) => (Math.floor(n - n * 0.1));
   const plus20perc = (n) => (Math.floor(n + n * 0.2));
-  const croppedX = minus10perc(object.x) >= 0
-    ? minus10perc(object.x)
-    : 0;
-  const croppedY = minus10perc(object.y) >= 0
-    ? minus10perc(object.y)
-    : 0;
+  const croppedX = minus10perc(object.x);
+  const croppedY = minus10perc(object.y);
   const croppedHeight = plus20perc(object.height);
   const croppedWidth = plus20perc(object.width);
   return image.crop(croppedX, croppedY, croppedHeight, croppedWidth);

@@ -21,23 +21,17 @@ function cropFaceAndShow(rawImage, window) {
     const obj = objects[0];
     if (obj)
       window.show(crop(rawImage, obj));
-    else
-      console.log('there are no faces');
     if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
       process.exit(0);
   };
   rawImage.detectObject(cv.FACE_CASCADE, {}, cb);
 }
 
-function detectObjectsFromCamera(camera, window, cascade) {
+function detectFaceFromCamera(camera, window) {
   return function () {
     camera.read((err, rawImage) => {
       if (err) throw err;
-      // TODO: remove if here to improve speed
-      if (cascade === cv.FACE_CASCADE)
-        cropFaceAndShow(rawImage, window);
-      else
-        findRectangleAndShow(rawImage, window);
+      cropFaceAndShow(rawImage, window);
     });
   }
 }
@@ -47,7 +41,7 @@ try {
   const camera = new cv.VideoCapture(0);
   camera.setWidth(CAM_WIDTH);
   camera.setHeight(CAM_HEIGHT);
-  const cb = detectObjectsFromCamera(camera, window, cv.FACE_CASCADE);
+  const cb = detectFaceFromCamera(camera, window);
   setInterval(cb, MAGIC_NUMBER);
 } catch (e){
   console.log("Couldn't start camera:", e)
