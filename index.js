@@ -17,6 +17,8 @@ function transformImage(image) {
   const copy = image.clone();
   copy.convertGrayscale();
   copy.medianBlur(5);
+  copy.canny(0, 100);
+  copy.dilate(2);
   return copy;
 }
 
@@ -36,19 +38,18 @@ function crop(image, object) {
 
 function detectObjectsFromCamera(camera, window) {
   return function() {
-    camera.read((err, im) => {
+    camera.read((err, rawImage) => {
       if (err) throw err;
-      let transformed = transformImage(im);
-      transformed.detectObject(cv.FACE_CASCADE, {}, (err, objects) => {
+      rawImage.detectObject(cv.FACE_CASCADE, {}, (err, objects) => {
         if (err) throw err;
-        const face = objects[0];
-        if (face) {
-          transformed.rectangle([face.x, face.y], [face.width, face.height]);
-          transformed = crop(transformed, face);
+        const obj = objects[0];
+        if (obj) {
+          const cropped = crop(rawImage, obj);
+          const filtered = transformImage(cropped);
+          window.show(filtered);
         }
         else
-          console.log('there are no faces');
-        window.show(transformed);
+          console.log('there are no objects');
         if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
           process.exit(0);
       });
