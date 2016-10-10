@@ -2,6 +2,8 @@ const cv = require('opencv');
 
 const transformImage = require('./imageProcessing').transformImage;
 const crop = require('./imageProcessing').crop;
+const findBiggestRectangle
+  = require('./imageProcessing').findBiggestRectangle;
 
 // TODO: fix segmentation fault error
 
@@ -16,16 +18,17 @@ const CAM_HEIGHT = 180;
 const CAM_WIDTH = 320;
 const MAGIC_NUMBER = 200;
 
-function detectObjectsFromCamera(camera, window) {
+function detectObjectsFromCamera(camera, window, cascade) {
   return function() {
     camera.read((err, rawImage) => {
       if (err) throw err;
-      rawImage.detectObject(cv.FACE_CASCADE, {}, (err, objects) => {
+      rawImage.detectObject(cascade, {}, (err, objects) => {
         if (err) throw err;
         const obj = objects[0];
         if (obj) {
           const cropped = crop(rawImage, obj);
           const filtered = transformImage(cropped);
+          const rectangle = findBiggestRectangle(filtered);
           window.show(filtered);
         }
         else
@@ -42,7 +45,8 @@ try {
   const camera = new cv.VideoCapture(0);
   camera.setWidth(CAM_WIDTH);
   camera.setHeight(CAM_HEIGHT);
-  setInterval(detectObjectsFromCamera(camera, window), MAGIC_NUMBER);
+  const cb = detectObjectsFromCamera(camera, window, cv.FACE_CASCADE);
+  setInterval(cb, MAGIC_NUMBER);
 } catch (e){
   console.log("Couldn't start camera:", e)
 }
