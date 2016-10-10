@@ -18,24 +18,27 @@ const CAM_HEIGHT = 180;
 const CAM_WIDTH = 320;
 const MAGIC_NUMBER = 200;
 
+function cropAndShow(rawImage, camera, window) {
+  return function (err, objects) {
+    if (err) throw err;
+    const obj = objects[0];
+    if (obj)
+      window.show(crop(rawImage, obj));
+    else
+      console.log('there are no objects');
+    if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
+      process.exit(0);
+  }
+}
+
 function detectObjectsFromCamera(camera, window, cascade) {
   return function() {
     camera.read((err, rawImage) => {
       if (err) throw err;
-      rawImage.detectObject(cascade, {}, (err, objects) => {
-        if (err) throw err;
-        const obj = objects[0];
-        if (obj) {
-          const cropped = crop(rawImage, obj);
-          const filtered = transformImage(cropped);
-          const rectangle = findBiggestRectangle(filtered);
-          window.show(filtered);
-        }
-        else
-          console.log('there are no objects');
-        if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
-          process.exit(0);
-      });
+      const cb = cascade
+        ? cropAndShow(rawImage, camera, window)
+        : null;
+      rawImage.detectObject(cascade, {}, cb);
     });
   }
 }
