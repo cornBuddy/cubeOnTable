@@ -24,7 +24,8 @@ exec(`perl bin/createsamples.pl positive.dat negative.dat samples`
 exec('python tools/mergevec.py -v samples/ -o samples.vec');
 const numNeg = parseInt(exec('ls negative/ | wc -l'));
 const numPos = Math.floor(
-  (POSITIVE_SAMPLES_COUNT - numNeg) / (1 + (NUM_STAGES - 1) * (1 - MIN_HIT_RATE)));
+  (POSITIVE_SAMPLES_COUNT - numNeg)
+  / (1 + (NUM_STAGES - 1) * (1 - MIN_HIT_RATE)));
 exec(`opencv_traincascade -data classifier -vec samples.vec`
   + ` -bg negative.dat -numStages ${NUM_STAGES} -minHitRate ${MIN_HIT_RATE}`
   + ` -maxFalseAlarmRate 0.5`
