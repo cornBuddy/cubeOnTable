@@ -15,24 +15,25 @@ const crop = require('./imageProcessing').crop;
 const CAM_HEIGHT = 180;
 const CAM_WIDTH = 320;
 const MAGIC_NUMBER = 200;
+const TABLE_CASCADE = './studying/classifier/cascade.xml'
 
-function cropFaceAndShow(rawImage, window) {
+function cropTableAndShow(rawImage, window) {
   const cb = (err, objects) => {
     if (err) throw err;
-    const obj = objects[0];
-    if (obj)
-      window.show(crop(rawImage, obj));
+    for (const obj of objects)
+      rawImage.rectangle([obj.x, obj.y], [obj.height, obj.width]);
+    window.show(rawImage);
     if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
       process.exit(0);
   };
-  rawImage.detectObject(cv.FACE_CASCADE, {}, cb);
+  rawImage.detectObject(TABLE_CASCADE, {}, cb);
 }
 
-function detectFaceFromCamera(camera, window) {
+function detectTableFromCamera(camera, window) {
   return function () {
     camera.read((err, rawImage) => {
       if (err) throw err;
-      cropFaceAndShow(rawImage, window);
+      cropTableAndShow(rawImage, window);
     });
   }
 }
@@ -42,7 +43,7 @@ try {
   const camera = new cv.VideoCapture(0);
   camera.setWidth(CAM_WIDTH);
   camera.setHeight(CAM_HEIGHT);
-  const cb = detectFaceFromCamera(camera, window);
+  const cb = detectTableFromCamera(camera, window);
   setInterval(cb, MAGIC_NUMBER);
 } catch (e){
   console.log("Couldn't start camera:", e)
