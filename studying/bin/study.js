@@ -5,8 +5,8 @@ const POSITIVE_SAMPLES_COUNT = 7000;
 const WIDTH = 48;
 const HEIGTH = 24;
 const BUF_SIZE = 512;
-const NUM_STAGES = 10;
-const MIN_HIT_RATE = 0.99;
+const NUM_STAGES = 20;
+const MIN_HIT_RATE = 0.999;
 const CLASSIFIER_DIR = 'lbp-classifier';
 const FEATURE_TYPE = 'LBP';
 
