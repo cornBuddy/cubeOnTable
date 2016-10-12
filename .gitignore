@@ -38,9 +38,11 @@ jspm_packages
 
 # Images, videos and archives
 *.jpg
+*.JPG
 *.gz
 *.dat
 *.3gp
+*.mov
 *.vec
 
 # Binaries
