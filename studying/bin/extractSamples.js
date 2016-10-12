@@ -2,6 +2,7 @@
 const path = require('path');
 const cv = require('opencv');
 const inspect = require('util').inspect;
+const parseArgs = require('minimist');
 
 const POSITIVE_VIDEO = path.join(__dirname, '..', 'positive.3gp');
 const POSITIVE_OUTPUT = path.join(__dirname, '..', 'positive/');
@@ -23,5 +24,3 @@ function extractImages(pathToVideo, outputDir) {
   iter();
 }
 
-extractImages(POSITIVE_VIDEO, POSITIVE_OUTPUT);
-extractImages(NEGATIVE_VIDEO, NEGATIVE_OUTPUT);
