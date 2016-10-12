@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const exec = require('child_process').execSync;
 
-const POSITIVE_SAMPLES_COUNT = 5000;
+const POSITIVE_SAMPLES_COUNT = 7000;
 const WIDTH = 48;
 const HEIGTH = 24;
 const BUF_SIZE = 512;
