@@ -2,7 +2,7 @@
 const exec = require('child_process').execSync;
 
 const POSITIVE_SAMPLES_COUNT = 7000;
-const WIDTH = 24;
+const WIDTH = 48;
 const HEIGTH = 24;
 const BUF_SIZE = 1024;
 const NUM_STAGES = 20;
@@ -13,7 +13,6 @@ try {
 } catch (_) {
   console.log('nothing to remove from ./{positive,negative,samples}/*');
 }
-exec('bin/extractSamples.js 2> extracting.err.log 1> extracting.log');
 exec('find ./negative/ -name "*.jpg" > negative.dat');
 exec('find ./positive/ -name "*.jpg" > positive.dat');
 exec(`perl bin/createsamples.pl positive.dat negative.dat samples`
