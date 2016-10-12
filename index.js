@@ -15,7 +15,7 @@ const crop = require('./imageProcessing').crop;
 const CAM_HEIGHT = 180;
 const CAM_WIDTH = 320;
 const MAGIC_NUMBER = 200;
-const TABLE_CASCADE = './studying/classifier/cascade.xml'
+const TABLE_CASCADE = './studying/lbp-classifier/cascade.xml'
 
 function cropTableAndShow(rawImage, window) {
   const cb = (err, objects) => {
