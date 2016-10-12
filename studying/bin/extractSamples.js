@@ -4,23 +4,27 @@ const cv = require('opencv');
 const inspect = require('util').inspect;
 const parseArgs = require('minimist');
 
-const POSITIVE_VIDEO = path.join(__dirname, '..', 'positive.3gp');
-const POSITIVE_OUTPUT = path.join(__dirname, '..', 'positive/');
-const NEGATIVE_VIDEO = path.join(__dirname, '..', 'negative.3gp');
-const NEGATIVE_OUTPUT = path.join(__dirname, '..', 'negative/');
-
-function extractImages(pathToVideo, outputDir) {
+function extractImages(pathToVideo, outputDir, offset, prefix='img_') {
+  offset = offset || 5;
   const video = new cv.VideoCapture(pathToVideo);
   let i = 0;
   const iter = function() {
     video.read((err, mat) => {
       i++;
-      if (video.getFrameCount() < i)
+      if (video.getFrameCount() < i + offset)
         return;
-      mat.save(path.join(outputDir, `img_${i}.jpg`));
+      if (i % offset === 0)
+        mat.save(path.join(outputDir, `${prefix}${i}.jpg`));
       iter();
     });
   };
   iter();
 }
 
+const args = parseArgs(process.argv.slice(2));
+if (!args.o || !args._)
+  console.log('--o=path/to/output/dir/ [--p=image_name_prefix] [--offset=int] '
+      + 'files.ext to.ext extract.ext');
+
+for (const video of args._)
+  extractImages(video, args.o, args.offset, args.t);
