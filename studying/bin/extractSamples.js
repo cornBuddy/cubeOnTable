@@ -8,15 +8,18 @@ const parseArgs = require('minimist');
 function extractImages(pathToVideo, outputDir, offset, prefix='img_') {
   offset = offset || 5;
   const video = new cv.VideoCapture(pathToVideo);
-  const videoBaseName = basename(pathToVideo);
+  const base = basename(pathToVideo);
   let i = 0;
   const iter = function() {
     video.read((err, mat) => {
       i++;
       if (video.getFrameCount() < i + offset)
         return;
-      if (i % offset === 0)
-        mat.save(path.join(outputDir, `${prefix}${basename}_${i}.jpg`));
+      if (i % offset === 0) {
+        const imgName = path.join(outputDir, `${prefix}${base}_${i}.jpg`);
+        mat.save(imgName);
+        console.log(`saved to ${imgName}`);
+      }
       iter();
     });
   };
