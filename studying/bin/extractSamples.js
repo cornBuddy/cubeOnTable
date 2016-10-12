@@ -2,11 +2,13 @@
 const path = require('path');
 const cv = require('opencv');
 const inspect = require('util').inspect;
+const basename = require('path').basename
 const parseArgs = require('minimist');
 
 function extractImages(pathToVideo, outputDir, offset, prefix='img_') {
   offset = offset || 5;
   const video = new cv.VideoCapture(pathToVideo);
+  const videoBaseName = basename(pathToVideo);
   let i = 0;
   const iter = function() {
     video.read((err, mat) => {
@@ -14,7 +16,7 @@ function extractImages(pathToVideo, outputDir, offset, prefix='img_') {
       if (video.getFrameCount() < i + offset)
         return;
       if (i % offset === 0)
-        mat.save(path.join(outputDir, `${prefix}${i}.jpg`));
+        mat.save(path.join(outputDir, `${prefix}${basename}_${i}.jpg`));
       iter();
     });
   };
