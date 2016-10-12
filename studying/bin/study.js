@@ -9,9 +9,9 @@ const NUM_STAGES = 20;
 const MIN_HIT_RATE = 0.999;
 
 try {
-  exec('rm {positive,negative,samples}/*');
+  exec('rm samples/*');
 } catch (_) {
-  console.log('nothing to remove from ./{positive,negative,samples}/*');
+  console.log('nothing to remove from ./samples/*');
 }
 exec('find ./negative/ -name "*.jpg" > negative.dat');
 exec('find ./positive/ -name "*.jpg" > positive.dat');
@@ -25,10 +25,10 @@ const numNeg = parseInt(exec('ls negative/ | wc -l'));
 const numPos = Math.floor(
   (POSITIVE_SAMPLES_COUNT - numNeg)
   / (1 + (NUM_STAGES - 1) * (1 - MIN_HIT_RATE)));
-exec(`opencv_traincascade -data classifier -vec samples.vec`
-  + ` -bg negative.dat -numStages ${NUM_STAGES} -minHitRate ${MIN_HIT_RATE}`
-  + ` -maxFalseAlarmRate 0.5`
-  + ` -numPos ${numPos} -numNeg ${numNeg}`
-  + ` -w ${WIDTH} -h ${HEIGTH} -mode ALL`
-  + ` -precalcValBufSize ${BUF_SIZE} -precalcIdxBufSize ${BUF_SIZE}`
-  + ` 2> study.err.log 1> study.log`);
+//exec(`opencv_traincascade -data classifier -vec samples.vec`
+//  + ` -bg negative.dat -numStages ${NUM_STAGES} -minHitRate ${MIN_HIT_RATE}`
+//  + ` -maxFalseAlarmRate 0.5`
+//  + ` -numPos ${numPos} -numNeg ${numNeg}`
+//  + ` -w ${WIDTH} -h ${HEIGTH} -mode ALL`
+//  + ` -precalcValBufSize ${BUF_SIZE} -precalcIdxBufSize ${BUF_SIZE}`
+//  + ` 2> study.err.log 1> study.log`);
