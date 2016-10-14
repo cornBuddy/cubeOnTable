@@ -1,4 +1,5 @@
 const cv = require('opencv');
+const parseArgs = require('minimist');
 
 const crop = require('./imageProcessing').crop;
 
@@ -17,11 +18,15 @@ const CAM_WIDTH = 320;
 const MAGIC_NUMBER = 200;
 const TABLE_CASCADE = './studying/lbp-classifier/cascade.xml'
 
-function cropTableAndShow(rawImage, window) {
+function findTable(rawImage, window) {
   const cb = (err, objects) => {
     if (err) throw err;
-    for (const obj of objects)
+    for (const obj of objects) {
       rawImage.rectangle([obj.x, obj.y], [obj.height, obj.width]);
+      console.log(`(${obj.x}, ${obj.y}); h=${obj.height}, w=${obj.width}`);
+    }
+    if (objects.length === 0)
+      console.log('there is no table');
     window.show(rawImage);
     if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
       process.exit(0);
@@ -33,18 +38,43 @@ function detectTableFromCamera(camera, window) {
   return function () {
     camera.read((err, rawImage) => {
       if (err) throw err;
-      cropTableAndShow(rawImage, window);
+      findTable(rawImage, window);
     });
   }
 }
 
-try {
+function useVideo() {
   const window = new cv.NamedWindow('Video', cv.WINDOW_AUTOSIZE);
   const camera = new cv.VideoCapture(0);
   camera.setWidth(CAM_WIDTH);
   camera.setHeight(CAM_HEIGHT);
   const cb = detectTableFromCamera(camera, window);
   setInterval(cb, MAGIC_NUMBER);
-} catch (e){
-  console.log("Couldn't start camera:", e)
 }
+
+function usePhoto(path) {
+  const window = new cv.NamedWindow('Photo', cv.WINDOW_AUTOSIZE);
+  cv.readImage(path, function(err, rawImage) {
+    const cb = (err, objects) => {
+      if (err) throw err;
+      if (objects.length === 0)
+        console.log('there is no table');
+      else {
+        for (const obj of objects) {
+          rawImage.rectangle([obj.x, obj.y], [obj.height, obj.width]);
+          const debugInfo
+            = `(${obj.x}, ${obj.y}); h=${obj.height}, w=${obj.width}`
+          console.log(debugInfo);
+        }
+        window.show(rawImage);
+      }
+    };
+  rawImage.detectObject(TABLE_CASCADE, {}, cb);
+  });
+}
+
+const args = parseArgs(process.argv.slice(2));
+if (args.img)
+  usePhoto(args.img);
+else
+  useVideo();
