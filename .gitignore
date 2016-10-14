@@ -41,6 +41,7 @@ jspm_packages
 *.JPG
 *.gz
 *.dat
+*.tar
 *.3gp
 *.mov
 *.mp4
