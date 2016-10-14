@@ -20,8 +20,10 @@ const TABLE_CASCADE = './studying/lbp-classifier/cascade.xml'
 function cropTableAndShow(rawImage, window) {
   const cb = (err, objects) => {
     if (err) throw err;
-    for (const obj of objects)
+    for (const obj of objects) {
       rawImage.rectangle([obj.x, obj.y], [obj.height, obj.width]);
+      console.log(`(${obj.x}, ${obj.y}); h=${obj.height}, w=${obj.width}`);
+    }
     window.show(rawImage);
     if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
       process.exit(0);
