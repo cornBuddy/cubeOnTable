@@ -9,6 +9,7 @@ const NUM_STAGES = 20;
 const MIN_HIT_RATE = 0.999;
 const CLASSIFIER_DIR = 'lbp-classifier';
 const FEATURE_TYPE = 'LBP';
+const FALSE_ALARM_RATE = 0.3;
 
 //try {
 //  exec('rm samples/*');
@@ -29,7 +30,7 @@ const numPos = Math.floor(
   / (1 + (NUM_STAGES - 1) * (1 - MIN_HIT_RATE)));
 exec(`opencv_traincascade -data ${CLASSIFIER_DIR} -vec samples.vec`
   + ` -bg negative.dat -numStages ${NUM_STAGES} -minHitRate ${MIN_HIT_RATE}`
-  + ` -maxFalseAlarmRate 0.5`
+  + ` -maxFalseAlarmRate ${FALSE_ALARM_RATE}}`
   + ` -numPos ${numPos} -numNeg ${numNeg}`
   + ` -w ${WIDTH} -h ${HEIGTH} -mode ALL`
   + ` -precalcValBufSize ${BUF_SIZE} -precalcIdxBufSize ${BUF_SIZE}`
