@@ -57,16 +57,17 @@ function usePhoto(path) {
   cv.readImage(path, function(err, rawImage) {
     const cb = (err, objects) => {
       if (err) throw err;
-      for (const obj of objects) {
-        rawImage.rectangle([obj.x, obj.y], [obj.height, obj.width]);
-        console.log(`(${obj.x}, ${obj.y});`
-            + ` h=${obj.height}, w=${obj.width}`);
-      }
       if (objects.length === 0)
         console.log('there is no table');
-      window.show(rawImage);
-      if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
-        process.exit(0);
+      else {
+        for (const obj of objects) {
+          rawImage.rectangle([obj.x, obj.y], [obj.height, obj.width]);
+          const debugInfo
+            = `(${obj.x}, ${obj.y}); h=${obj.height}, w=${obj.width}`
+          console.log(debugInfo);
+        }
+        window.show(rawImage);
+      }
     };
   rawImage.detectObject(TABLE_CASCADE, {}, cb);
   });
