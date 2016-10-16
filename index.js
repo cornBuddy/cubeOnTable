@@ -13,7 +13,10 @@ function detectObjectsFromCamera(camera, window) {
     camera.read((err, rawImage) => {
       const filtered = filter(rawImage);
       const table = findBiggestRectangle(filtered);
-      rawImage.rectangle([table.x, table.y], [table.width, table.height]);
+      if (table === null)
+        console.log('there is no rectangle');
+      else
+        rawImage.rectangle([table.x, table.y], [table.width, table.height]);
       window.show(filtered);
       if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
         process.exit(0);
