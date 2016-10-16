@@ -10,8 +10,11 @@ function detectObjectsFromCamera(camera, window) {
   return function() {
     camera.read((err, rawImage) => {
       const filtered = filter(rawImage);
-      const table = findBiggestRectangle(filtered);
-      rawImage.rectangle([table.x, table.y], [table.width, table.height]);
+      //const table = findBiggestRectangle(filtered);
+      //rawImage.rectangle([table.x, table.y], [table.width, table.height]);
+      window.show(filtered);
+      if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
+        process.exit(0);
     });
   }
 }
