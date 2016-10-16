@@ -2,8 +2,7 @@
 const cv = require('opencv');
 const filter = require('./imageProcessing').filter;
 const drawAxis = require('./imageProcessing').drawAxis;
-const findBiggestRectangleCorners
-  = require('./imageProcessing').findBiggestRectangleCorners
+const findTrackedObject = require('./imageProcessing').findTrackedObject;
 
 const CAM_HEIGHT = 240;
 const CAM_WIDTH = 320;
@@ -11,16 +10,14 @@ const MAGIC_NUMBER = 200;
 
 function detectObjectsFromCamera(camera, window) {
   return function() {
-    const debug = new cv.NamedWindow('Debug');
     camera.read((err, rawImage) => {
       const filtered = filter(rawImage);
-      const corners = findBiggestRectangleCorners(filtered);
-      if (corners === null)
+      const object = findTrackedObject(filtered);
+      if (object === null)
         console.log('there is no rectangle');
       else
-        drawAxis(rawImage, corners);
+        drawAxis(rawImage, object);
       window.show(rawImage);
-      debug.show(filtered);
       if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
         process.exit(0);
     });

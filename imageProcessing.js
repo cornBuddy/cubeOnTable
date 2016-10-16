@@ -21,7 +21,7 @@ function filter(image) {
   return copy;
 }
 
-function findBiggestRectangleCorners(image) {
+function findTrackedObject(image) {
   const contours = image.findContours();
   let biggestRectIndex = 0;
   let founded = false;
@@ -39,6 +39,7 @@ function findBiggestRectangleCorners(image) {
         if (currentArea > contours.area(biggestRectIndex)) {
           founded = true;
           points = [];
+          biggestRectIndex = i;
           for (let p = 0; p < 4; p++) {
             const point = contours.point(i, p);
             points.push(point);
@@ -50,19 +51,21 @@ function findBiggestRectangleCorners(image) {
     }
   }
   return founded
-    ? points
+    ? { points: points, rect: contours.boundingRect(biggestRectIndex) }
     : null;
 }
 
-function drawAxis(image, points) {
-  console.log(points);
-  for (const p of points)
+function drawAxis(image, object) {
+  console.log(object);
+  for (const p of object.points)
     image.ellipse(p.x, p.y);
-  const o = points[0];
-  image.line([o.x, o.y], [points[3].x, points[3].y], RED);
-  image.line([o.x, o.y], [points[2].x, points[2].y], GREEN);
+  const o = object.points[0];
+  image.line([o.x, o.y], [object.points[3].x, object.points[3].y], RED);
+  image.line([o.x, o.y], [object.points[2].x, object.points[2].y], GREEN);
+  const r = object.rect;
+  image.rectangle([r.x, r.y], [r.width, r.height]);
 }
 
 module.exports.filter = filter;
-module.exports.findBiggestRectangleCorners = findBiggestRectangleCorners;
+module.exports.findTrackedObject = findTrackedObject;
 module.exports.drawAxis = drawAxis;
