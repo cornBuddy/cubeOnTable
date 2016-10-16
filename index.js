@@ -21,12 +21,11 @@ const TABLE_CASCADE = './studying/lbp-classifier/cascade.xml'
 function findTable(rawImage, window) {
   const cb = (err, objects) => {
     if (err) throw err;
+    console.log(objects);
     for (const obj of objects) {
       rawImage.rectangle([obj.x, obj.y], [obj.height, obj.width]);
       console.log(`(${obj.x}, ${obj.y}); h=${obj.height}, w=${obj.width}`);
     }
-    if (objects.length === 0)
-      console.log('there is no table');
     window.show(rawImage);
     if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
       process.exit(0);
@@ -42,7 +41,6 @@ function detectTableFromCamera(camera, window) {
     });
   }
 }
-
 function useVideo() {
   const window = new cv.NamedWindow('Video', cv.WINDOW_AUTOSIZE);
   const camera = new cv.VideoCapture(0);
