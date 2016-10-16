@@ -17,7 +17,7 @@ function detectObjectsFromCamera(camera, window) {
         console.log('there is no rectangle');
       else
         rawImage.rectangle([table.x, table.y], [table.width, table.height]);
-      window.show(filtered);
+      window.show(rawImage);
       if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
         process.exit(0);
     });
