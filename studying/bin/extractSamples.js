@@ -28,8 +28,9 @@ function extractImages(pathToVideo, outputDir, offset, prefix='img_') {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.o || !args._)
-  console.log('--o=path/to/output/dir/ [--p=image_name_prefix] [--offset=int] '
-      + 'files.ext to.ext extract.ext');
+  console.log('--o=path/to/output/dir/'
+      + ' [--p=image_name_prefix] [--offset=int]'
+      + ' files.ext to.ext extract.ext');
 
 for (const video of args._)
-  extractImages(video, args.o, args.offset, args.t);
+  extractImages(video, args.o, args.offset, args.p);
