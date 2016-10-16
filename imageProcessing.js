@@ -1,3 +1,4 @@
+// TODO: find better constants vaules, bad detection
 const CANNY_LOW = 300;
 const CANNY_HIGH = 400;
 const GAUSSIAN_BLUR_SIZE = [3, 3];
