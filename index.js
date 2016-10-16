@@ -7,18 +7,10 @@ const MAGIC_NUMBER = 200;
 
 function detectObjectsFromCamera(camera, window) {
   return function() {
-    camera.read((err, im) => {
-      if (err) throw err;
-      im.detectObject(cv.FACE_CASCADE, {}, (err, objects) => {
-        if (err) throw err;
-        for (let i = 0; i < objects.length; i++) {
-          const obj = objects[i];
-          console.log(`obj[${i}] = [${obj.x}, ${obj.y}]`);
-          im.rectangle([obj.x, obj.y], [obj.width, obj.height]);
-        }
-        window.show(im);
-        window.blockingWaitKey(0, MAGIC_NUMBER);
-      });
+    camera.read((err, rawImage) => {
+      const filtered = filter(rawImage);
+      const table = findBiggestRectangle(filtered);
+      rawImage.rectangle([table.x, table.y], [table.width, table.height]);
     });
   }
 }
