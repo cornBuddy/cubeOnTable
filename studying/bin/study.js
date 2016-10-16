@@ -7,7 +7,7 @@ const MAX_X_ANGLE = 3,14159;
 
 const POSITIVE_SAMPLES_COUNT = 40000;
 const WIDTH = 160;
-const HEIGTH = 40;
+const HEIGTH = 80;
 const BUF_SIZE = 1024;
 const NUM_STAGES = 20;
 const MIN_HIT_RATE = 0.999;
