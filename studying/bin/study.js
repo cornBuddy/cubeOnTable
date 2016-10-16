@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 const exec = require('child_process').execSync;
 
-const MAX_Z_ANGLE = 3,14159;
-const MAX_Y_ANGLE = 3,14159;
-const MAX_X_ANGLE = 3,14159;
+const MAX_Z_ANGLE = 1,5708;
+const MAX_Y_ANGLE = 1,5708;
+const MAX_X_ANGLE = 1,5708;
 
 const POSITIVE_SAMPLES_COUNT = 40000;
 const WIDTH = 160;
