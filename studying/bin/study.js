@@ -5,7 +5,7 @@ const MAX_Z_ANGLE = 1,5708;
 const MAX_Y_ANGLE = 1,5708;
 const MAX_X_ANGLE = 1,5708;
 
-const POSITIVE_SAMPLES_COUNT = 40000;
+const POSITIVE_SAMPLES_COUNT = 20000;
 const WIDTH = 160;
 const HEIGTH = 80;
 const BUF_SIZE = 1024;
