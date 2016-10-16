@@ -15,10 +15,11 @@ function filter(image) {
   return copy;
 }
 
-function findBiggestRectangle(image) {
+function findBiggestRectangleCorners(image) {
   const contours = image.findContours();
   let biggestRectIndex = 0;
   let founded = false;
+  let points = [];
   for (let i = 0; i < contours.size(); i++) {
     if (contours.area(i) < MIN_RECT_AREA)
       continue;
@@ -28,19 +29,20 @@ function findBiggestRectangle(image) {
       case 4:
         const currentArea = contours.area(i);
         if (currentArea > contours.area(biggestRectIndex)) {
-          biggestRectIndex = i;
           founded = true;
+          points = [];
+          for (let p = 0; p < 4; p++)
+            points.push(contours.point(i, p));
         }
         break;
       default:
         continue;
     }
   }
-  console.log(biggestRectIndex);
   return founded
-    ? contours.boundingRect(biggestRectIndex)
+    ? points
     : null;
 }
 
 module.exports.filter = filter;
-module.exports.findBiggestRectangle = findBiggestRectangle;
+module.exports.findBiggestRectangleCorners = findBiggestRectangleCorners;
