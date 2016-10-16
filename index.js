@@ -1,8 +1,8 @@
 // TODO: fix segmentation fault error
 const cv = require('opencv');
 const filter = require('./imageProcessing').filter;
-const findBiggestRectangle
-  = require('./imageProcessing').findBiggestRectangle
+const findBiggestRectangleCorners
+  = require('./imageProcessing').findBiggestRectangleCorners
 
 const CAM_HEIGHT = 240;
 const CAM_WIDTH = 320;
@@ -12,11 +12,12 @@ function detectObjectsFromCamera(camera, window) {
   return function() {
     camera.read((err, rawImage) => {
       const filtered = filter(rawImage);
-      const table = findBiggestRectangle(filtered);
-      if (table === null)
+      const corners = findBiggestRectangleCorners(filtered);
+      if (corners === null)
         console.log('there is no rectangle');
       else
-        rawImage.rectangle([table.x, table.y], [table.width, table.height]);
+        for (let i = 0; i < corners.length; i++)
+          rawImage.ellipse(corners[i].x, corners[i].y);
       window.show(rawImage);
       if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
         process.exit(0);
