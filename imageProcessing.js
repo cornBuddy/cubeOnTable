@@ -11,4 +11,9 @@ function filter(image) {
   return copy;
 }
 
+function findBiggestRectangle(image) {
+  return null;
+}
+
 module.exports.filter = filter;
+module.exports.findBiggestRectangle = findBiggestRectangle;
