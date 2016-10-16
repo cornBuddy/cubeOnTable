@@ -7,6 +7,7 @@ const crop = require('./imageProcessing').crop;
 
 // 1 find table on image
 // 2 crop image; cropped part should contain only table and few pixels around it
+//   !! Mat.roi !!
 // 3 filter image; find contours of image using canny algorithm
 // 4 on cropped part find the biggest rectangle
 // 5 draw cube on it
