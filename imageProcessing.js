@@ -21,7 +21,8 @@ function filter(image) {
   return copy;
 }
 
-function findTrackedObject(image) {
+function findTrackedObject(rawImage) {
+  const image = filter(rawImage);
   const contours = image.findContours();
   let biggestRectIndex = 0;
   let founded = false;
@@ -66,6 +67,10 @@ function drawAxis(image, object) {
   image.rectangle([r.x, r.y], [r.width, r.height]);
 }
 
-module.exports.filter = filter;
+function track(image, object) {
+  return null;
+}
+
 module.exports.findTrackedObject = findTrackedObject;
 module.exports.drawAxis = drawAxis;
+module.exports.track = track;
