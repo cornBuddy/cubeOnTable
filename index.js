@@ -7,15 +7,20 @@ const CAM_HEIGHT = 240;
 const CAM_WIDTH = 320;
 const MAGIC_NUMBER = 200;
 
+let object = null;
+
 function detectObjectsFromCamera(camera, window) {
   return function() {
-    camera.read((err, image) => {
-      const object = findTrackedObject(image);
-      if (object === null)
+    const debug = new cv.NamedWindow('Debug');
+    camera.read((err, rawImage) => {
+      const filtered = filter(rawImage);
+      if (object === null) {
+        object = findTrackedObject(filtered);
         console.log('there is no rectangle');
+      }
       else
-        track(image, object);
-      window.show(image);
+        track(rawImage, object);
+      window.show(rawImage);
       if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
         process.exit(0);
     });
