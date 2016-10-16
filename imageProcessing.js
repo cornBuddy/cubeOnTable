@@ -51,9 +51,15 @@ function findTrackedObject(rawImage) {
         continue;
     }
   }
-  return founded
-    ? { points: points, rect: contours.boundingRect(biggestRectIndex) }
-    : null;
+  if (founded) {
+    const rect = contours.boundingRect(biggestRectIndex);
+    const r = [rect.x, rect.y, rect.width, rect.height];
+    return {
+      points: points, rect: rect,
+      track: new cv.TrackedObject(rawImage, r, {channel: 'value'}),
+    };
+  } else
+    return null;
 }
 
 function drawAxis(image, object) {
@@ -72,5 +78,4 @@ function track(image, object) {
 }
 
 module.exports.findTrackedObject = findTrackedObject;
-module.exports.drawAxis = drawAxis;
 module.exports.track = track;
