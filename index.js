@@ -1,5 +1,6 @@
 // TODO: fix segmentation fault error
 const cv = require('opencv');
+const filter = require('./imageProcessing').filter;
 
 const CAM_HEIGHT = 240;
 const CAM_WIDTH = 320;
