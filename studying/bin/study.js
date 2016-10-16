@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 const exec = require('child_process').execSync;
 
-const POSITIVE_SAMPLES_COUNT = 20000;
+const MAX_Z_ANGLE = 3,14159;
+const MAX_Y_ANGLE = 3,14159;
+const MAX_X_ANGLE = 3,14159;
+
+const POSITIVE_SAMPLES_COUNT = 40000;
 const WIDTH = 160;
 const HEIGTH = 40;
 const BUF_SIZE = 1024;
@@ -9,14 +13,17 @@ const NUM_STAGES = 20;
 const MIN_HIT_RATE = 0.999;
 const CLASSIFIER_DIR = 'lbp-classifier';
 const FEATURE_TYPE = 'LBP';
-const FALSE_ALARM_RATE = 0.5;
+const FALSE_ALARM_RATE = 0.4;
 
 exec('find ./negative/ -name "*.jpg" > negative.dat');
 exec('find ./positive/ -name "*.jpg" > positive.dat');
 exec(`perl bin/createsamples.pl positive.dat negative.dat samples`
   + ` ${POSITIVE_SAMPLES_COUNT}`
-  + ` "opencv_createsamples -bgcolor 0 -bgthresh 0 -maxxangle 1.1`
-  + ` -maxyangle 1.1 maxzangle 0.5 -maxidev 40 -w ${WIDTH} -h ${HEIGTH}"`
+  + ` "opencv_createsamples -bgcolor 0 -bgthresh 0`
+  + ` -maxxangle ${MAX_X_ANGLE}`
+  + ` -maxyangle ${MAX_Y_ANGLE}`
+  + ` -maxzangle ${MAX_Z_ANGLE}`
+  + ` -maxidev 40 -w ${WIDTH} -h ${HEIGTH}"`
   + ` 2> samples.err.log 1> samples.log`);
 exec('python tools/mergevec.py -v samples/ -o samples.vec');
 const numNeg = parseInt(exec('ls negative/ | wc -l'));
