@@ -37,7 +37,6 @@ function findTrackedObject(rawImage) {
     contours.approxPolyDP(i, DELTA * arcLength, IS_CLOSED);
     switch(contours.cornerCount(i)) {
       case 4:
-        const r = contours.boundingRect(i);
         const currentArea = contours.area(i);
         if (currentArea > contours.area(biggestRectIndex)) {
           founded = true;
@@ -55,11 +54,16 @@ function findTrackedObject(rawImage) {
   }
   if (founded) {
     const rect = contours.boundingRect(biggestRectIndex);
-    const r = [rect.x, rect.y, rect.width, rect.height];
+    // Hardbone for OpenCV assertion bug
+    const r = [rect.x, rect.y, rect.width + rect.x, rect.height + rect.y];
+    console.log(r);
+    console.log(`image: [w=${rawImage.width()}, h=${rawImage.height()}]`);
+    console.log(`rect: [w=${rect.width}, h=${rect.height}];`
+        + ` [x=${rect.x}, y=${rect.y}]`);
     return {
       points: points, rect: rect,
-      // FIXME: assertion failed here
-      //track: new cv.TrackedObject(rawImage, r, {channel: 'value'}),
+      // assertion failed here
+      track: new cv.TrackedObject(rawImage, r, {channel: 'value'}),
     };
   } else
     return null;
