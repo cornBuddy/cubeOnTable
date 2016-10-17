@@ -1,14 +1,14 @@
 // TODO: fix segmentation fault error
 const cv = require('opencv');
 const drawCube = require('./imageProcessing').drawCube;
-const findTrackedObject = require('./imageProcessing').findTrackedObject;
+const findTrack = require('./imageProcessing').findTrack;
 
 const CAM_HEIGHT = 240;
 const CAM_WIDTH = 320;
 const MAGIC_NUMBER = 200;
 const ESC = 27;
 
-let object = null;
+let track = null;
 let pid = null;
 
 function initCamera() {
@@ -22,12 +22,12 @@ function initWindow() {
   return new cv.NamedWindow('Tracking', 0);
 }
 
-function findObject(camera) {
+function searchForTrack(camera) {
   const search =  function() {
     camera.read((err, rawImage) => {
       console.log('searching...');
-      object = findTrackedObject(rawImage);
-      if (object) {
+      track = findTrack(rawImage);
+      if (track) {
         console.log('found!');
         clearInterval(pid);
         return;
@@ -40,7 +40,7 @@ function findObject(camera) {
 function showImageFromCamera(window, camera, cb) {
   camera.read((err, rawImage) => {
     if (err) throw err;
-    const imageWithCube = drawCube(rawImage, object);
+    const imageWithCube = drawCube(rawImage, track);
     window.show(imageWithCube);
     if (window.blockingWaitKey(0, MAGIC_NUMBER) === ESC)
       process.exit(0);
@@ -48,6 +48,6 @@ function showImageFromCamera(window, camera, cb) {
 }
 
 const camera = initCamera();
-findObject(camera);
+searchForTrack(camera);
 const window = initWindow();
 showImageFromCamera(window, camera);
