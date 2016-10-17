@@ -16,7 +16,7 @@ function findObject(camera) {
       console.log('searching...');
       object = findTrackedObject(rawImage);
       if (object) {
-        console.log('found!', object);
+        console.log('found!');
         clearInterval(pid);
         return;
       }
