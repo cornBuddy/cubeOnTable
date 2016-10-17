@@ -1,3 +1,5 @@
+const cv = require('opencv');
+
 // TODO: find better constants vaules, bad detection
 const CANNY_LOW = 80;
 const CANNY_HIGH = 300;
@@ -62,7 +64,7 @@ function findBiggestRectangleIndex(contours) {
     }
   }
   if (found)
-    return biggestRectIndex,
+    return biggestRectIndex;
   else
     return -1;
 }
