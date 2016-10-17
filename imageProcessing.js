@@ -50,6 +50,17 @@ function findBiggestRectangleIndex(contours) {
     return -1;
 }
 
+function getRectPoints(contours, index) {
+  let points = [];
+  for (let p = 0; i < 4; p++)
+    points.push(contours.point(index, p));
+  return points;
+}
+
+function roi(rect) {
+  return [rect.x, rect.y, rect.width + rect.x, rect.height + rect.y];
+}
+
 function findTrackedObject(rawImage) {
   const image = filter(rawImage);
   const contours = image.findContours();
@@ -58,31 +69,19 @@ function findTrackedObject(rawImage) {
     return null;
   }
   const rect = contours.boundingRect(biggestRectInd);
-  const r = [rect.x, rect.y, rect.width + rect.x, rect.height + rect.y];
-  console.log(r);
-  console.log(`image: [w=${rawImage.width()}, h=${rawImage.height()}]`);
-  console.log(`rect: [w=${rect.width}, h=${rect.height}];`
-      + ` [x=${rect.x}, y=${rect.y}]`);
+  const r = roi(rect);
   return new cv.TrackedObject(rawImage, r, {channel: 'value'});
 }
 
-function drawAxis(image, object) {
-  console.log(object);
-  for (const p of object.points)
-    image.ellipse(p.x, p.y);
-  const o = object.points[0];
-  image.line([o.x, o.y], [object.points[3].x, object.points[3].y], RED);
-  image.line([o.x, o.y], [object.points[2].x, object.points[2].y], GREEN);
-  const r = object.rect;
-  image.rectangle([r.x, r.y], [r.width, r.height]);
-}
-
-function track(image, object) {
-  return object.track.track(image);
-}
-
 function drawCube(image, object) {
-  const rect = track(image, object);
+  const rect = object.track(image);
+  const r = roi(rect);
+  const copy = image.copy();
+  copy.roi(r);
+  const contours = copy.findContours();
+  const biggestRectIndex = findBiggestRectangleIndex(contours);
+  const points = getRectPoints(contours, biggestRectIndex);
+  // TODO: write some code
 }
 
 module.exports.findTrackedObject = findTrackedObject;
