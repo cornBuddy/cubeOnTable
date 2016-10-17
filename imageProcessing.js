@@ -23,48 +23,47 @@ function filter(image) {
   return copy;
 }
 
-function findTrackedObject(rawImage) {
-  const image = filter(rawImage);
-  const contours = image.findContours();
+function invalidArea(area) {
+  return area < MIN_RECT_AREA || area > MAX_RECT_AREA;
+}
+
+function findBiggestRectangleIndex(contours) {
   let biggestRectIndex = 0;
-  let founded = false;
-  let points = [];
+  let found = false;
   for (let i = 0; i < contours.size(); i++) {
-    if (contours.area(i) < MIN_RECT_AREA
-        || contours.area(i) > MAX_RECT_AREA)
+    if (invalidArea(contours.area(i)))
       continue;
     const arcLength = contours.arcLength(i, IS_CLOSED);
     contours.approxPolyDP(i, DELTA * arcLength, IS_CLOSED);
-    switch(contours.cornerCount(i)) {
-      case 4:
-        const currentArea = contours.area(i);
-        if (currentArea > contours.area(biggestRectIndex)) {
-          founded = true;
-          points = [];
-          biggestRectIndex = i;
-          for (let p = 0; p < 4; p++) {
-            const point = contours.point(i, p);
-            points.push(point);
-          }
-        }
-        break;
-      default:
-        continue;
+    const currentArea = contours.area(i);
+    if (contours.cornerCount(i) === 4
+        && currentArea > contours.area(biggestRectIndex)) {
+      found = true;
+      biggestRectIndex = i;
+    } else {
+      continue;
     }
   }
-  if (founded) {
-    const rect = contours.boundingRect(biggestRectIndex);
-    const r = [rect.x, rect.y, rect.width + rect.x, rect.height + rect.y];
-    console.log(r);
-    console.log(`image: [w=${rawImage.width()}, h=${rawImage.height()}]`);
-    console.log(`rect: [w=${rect.width}, h=${rect.height}];`
-        + ` [x=${rect.x}, y=${rect.y}]`);
-    return {
-      points: points, rect: rect,
-      track: new cv.TrackedObject(rawImage, r, {channel: 'value'}),
-    };
-  } else
+  if (found)
+    return biggestRectIndex,
+  else
+    return -1;
+}
+
+function findTrackedObject(rawImage) {
+  const image = filter(rawImage);
+  const contours = image.findContours();
+  const biggestRectInd = findBiggestRectangleIndex(contours);
+  if (biggestRectInd === -1) {
     return null;
+  }
+  const rect = contours.boundingRect(biggestRectInd);
+  const r = [rect.x, rect.y, rect.width + rect.x, rect.height + rect.y];
+  console.log(r);
+  console.log(`image: [w=${rawImage.width()}, h=${rawImage.height()}]`);
+  console.log(`rect: [w=${rect.width}, h=${rect.height}];`
+      + ` [x=${rect.x}, y=${rect.y}]`);
+  return new cv.TrackedObject(rawImage, r, {channel: 'value'});
 }
 
 function drawAxis(image, object) {
@@ -79,11 +78,11 @@ function drawAxis(image, object) {
 }
 
 function track(image, object) {
-  return null;
+  return object.track.track(image);
 }
 
 function drawCube(image, object) {
-  return null;
+  const rect = track(image, object);
 }
 
 module.exports.findTrackedObject = findTrackedObject;
