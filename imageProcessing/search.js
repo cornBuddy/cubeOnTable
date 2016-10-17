@@ -104,3 +104,4 @@ function getTrackedObject(image, track) {
 
 module.exports.getTrackedObject = getTrackedObject;
 module.exports.findTrack = findTrack;
+module.exports.filter = filter;
