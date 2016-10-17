@@ -68,10 +68,18 @@ function findBiggestRectangleIndex(contours) {
 }
 
 function getTrackedObject(image, track) {
-  // TODO: implement this function
+  const rect = track.track(image);
+  const r = roi(rect);
+  const copy = image.copy();
+  copy.roi(r);
+  const contours = copy.contours();
+  const biggestRectInd = findBiggestRectangleIndex(contours);
+  if (biggestRectIndex === -1)
+    throw Error('tracked object moved from camera');
+  const points = getRectPoints(contours, biggestRectInd);
   return {
-    points: null,
-    rect: null,
+    points: points,
+    rect: contours.boundingRect(biggestRectInd),
   };
 }
 
