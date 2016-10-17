@@ -38,9 +38,8 @@ function findTrack(rawImage) {
   const image = filter(rawImage);
   const contours = image.findContours();
   const biggestRectInd = findBiggestRectangleIndex(contours);
-  if (biggestRectInd === -1) {
+  if (biggestRectInd === -1)
     return null;
-  }
   const rect = contours.boundingRect(biggestRectInd);
   const r = roi(rect);
   return new cv.TrackedObject(rawImage, r, {channel: 'value'});
@@ -105,3 +104,4 @@ function getTrackedObject(image, track) {
 module.exports.getTrackedObject = getTrackedObject;
 module.exports.findTrack = findTrack;
 module.exports.filter = filter;
+module.exports.getRectPoints = getRectPoints;
