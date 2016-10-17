@@ -21,33 +21,38 @@ function initWindow() {
 
 function searchForTrack(camera) {
   return new Promise((resolve, reject) => {
-    let pid = null;
-    const search =  function() {
+    const search = () => {
       camera.read((err, rawImage) => {
         if (err)
           reject(err);
         console.log('searching...');
         let track = findTrack(rawImage);
         if (track) {
-          console.log('found!', track);
-          clearInterval(pid);
+          console.log('found!');
           resolve(track);
-        }
+        } else
+          search();
       });
     };
-    pid = setInterval(search, MAGIC_NUMBER);
+    search();
+    console.log('search started');
   });
 }
 
 function showImage(window, camera) {
   return (track) => {
-    camera.read((err, rawImage) => {
-      if (err) throw err;
-      const imageWithCube = drawCube(rawImage, track);
-      window.show(imageWithCube);
-      if (window.blockingWaitKey(0, MAGIC_NUMBER) === ESC)
-        process.exit(0);
-    });
+    const show = () => {
+      camera.read((err, rawImage) => {
+        if (err) throw err;
+        console.log('read image from camera');
+        const imageWithCube = drawCube(rawImage, track);
+        window.show(imageWithCube);
+        if (window.blockingWaitKey(0, MAGIC_NUMBER) === ESC)
+          process.exit(0);
+      });
+    };
+    console.log('showing...');
+    setInterval(show, MAGIC_NUMBER);
   };
 }
 
