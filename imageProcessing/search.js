@@ -1,7 +1,7 @@
 const cv = require('opencv');
 
 // TODO: find better constants vaules, bad detection
-const CANNY_LOW = 80;
+const CANNY_LOW = 150;
 const CANNY_HIGH = 300;
 const GAUSSIAN_BLUR_SIZE = [5, 5];
 const DILATE_ITERS = 3;
@@ -9,7 +9,7 @@ const DILATE_ITERS = 3;
 const MIN_RECT_AREA = 100;
 const MAX_RECT_AREA = 320 * 240 / 4;
 const IS_CLOSED = true;
-const DELTA = 0.03;
+const DELTA = 0.1;
 
 function filter(image) {
   const copy = image.copy();
@@ -79,7 +79,7 @@ function getTrackedObject(image, track) {
   let region = image.crop(rect[0], rect[1], rect[2] - rect[0],
       rect[3] - rect[1]);
   region = filter(region);
-  region.save(`${__dirname}/debug/` 
+  region.save(`${__dirname}/debug/`
       + `getTrackedObject-region-${Date.now()}.jpg`);
   console.log('region found');
   const contours = region.findContours();
@@ -88,11 +88,11 @@ function getTrackedObject(image, track) {
   const biggestRectInd = findBiggestRectangleIndex(contours);
   if (biggestRectInd === -1)
     throw Error('tracked object moved from camera');
+  console.log('biggest rect found');
   const contourImg = new cv.Matrix(region.height, region.width);
   contourImg.drawContour(contourImg, biggestRectInd);
   contourImg.save(`${__dirname}/debug/`
       + `getTrackedObject-contour-${Date.now()}.jpg`);
-  console.log('biggest rect found');
   const points = getRectPoints(contours, biggestRectInd);
   console.log('rect points found');
   // FIXME: return absolute coordinates
