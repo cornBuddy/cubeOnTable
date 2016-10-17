@@ -72,21 +72,30 @@ function findBiggestRectangleIndex(contours) {
 function getTrackedObject(image, track) {
   // FIXME: [0,0,1,1], WTF?
   const rect = track.track(image);
+  image.save(`${__dirname}/debug/`
+      + `getTrackedObject-start-${Date.now()}.jpg`);
   console.log(`rect to track: [${rect}]`);
   // FIXME: assertion failure here sometimes
   let region = image.crop(rect[0], rect[1], rect[2] - rect[0],
       rect[3] - rect[1]);
   region = filter(region);
+  region.save(`${__dirname}/debug/` 
+      + `getTrackedObject-region-${Date.now()}.jpg`);
   console.log('region found');
   const contours = region.findContours();
   console.log('contours found');
   // FIXME: sometimes biggestRectInd === -1
   const biggestRectInd = findBiggestRectangleIndex(contours);
-  console.log('biggest rect found');
   if (biggestRectInd === -1)
     throw Error('tracked object moved from camera');
+  const contourImg = new cv.Matrix(region.height, region.width);
+  contourImg.drawContour(contourImg, biggestRectInd);
+  contourImg.save(`${__dirname}/debug/`
+      + `getTrackedObject-contour-${Date.now()}.jpg`);
+  console.log('biggest rect found');
   const points = getRectPoints(contours, biggestRectInd);
   console.log('rect points found');
+  // FIXME: return absolute coordinates
   return {
     points: points,
     rect: contours.boundingRect(biggestRectInd),

@@ -10,6 +10,8 @@ function drawCube(image, track) {
   console.log('draw axis');
   image.line([o.x, o.y], [points[1].x, points[1].y]);
   image.line([o.x, o.y], [points[2].x, points[2].y]);
+  // for a debug purposes
+  image.save(`${__dirname}/debug/drawCube-dbg-${Date.now()}.jpg`);
   return image;
 }
 
