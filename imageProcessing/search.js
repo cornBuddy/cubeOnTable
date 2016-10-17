@@ -25,7 +25,7 @@ function invalidArea(area) {
 
 function getRectPoints(contours, index) {
   let points = [];
-  for (let p = 0; i < 4; p++)
+  for (let p = 0; p < 4; p++)
     points.push(contours.point(index, p));
   return points;
 }
@@ -70,16 +70,23 @@ function findBiggestRectangleIndex(contours) {
 }
 
 function getTrackedObject(image, track) {
+  // FIXME: [0,0,1,1], WTF?
   const rect = track.track(image);
   console.log(`rect to track: [${rect}]`);
-  const copy = image.copy();
-  // FIXME: assertion failure here
-  copy.roi(rect[0], rect[1], rect[2], rect[3]);
-  const contours = copy.contours();
+  // FIXME: assertion failure here sometimes
+  let region = image.crop(rect[0], rect[1], rect[2] - rect[0],
+      rect[3] - rect[1]);
+  region = filter(region);
+  console.log('region found');
+  const contours = region.findContours();
+  console.log('contours found');
+  // FIXME: sometimes biggestRectInd === -1
   const biggestRectInd = findBiggestRectangleIndex(contours);
-  if (biggestRectIndex === -1)
+  console.log('biggest rect found');
+  if (biggestRectInd === -1)
     throw Error('tracked object moved from camera');
   const points = getRectPoints(contours, biggestRectInd);
+  console.log('rect points found');
   return {
     points: points,
     rect: contours.boundingRect(biggestRectInd),
