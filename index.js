@@ -42,7 +42,7 @@ function showImageFromCamera(window, camera, cb) {
     if (err) throw err;
     const imageWithCube = drawCube(rawImage, object);
     window.show(imageWithCube);
-    if (window.blockingWaitKey(0, 50) === ESC)
+    if (window.blockingWaitKey(0, MAGIC_NUMBER) === ESC)
       process.exit(0);
   });
 }
