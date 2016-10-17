@@ -8,31 +8,24 @@ const CAM_WIDTH = 320;
 const MAGIC_NUMBER = 200;
 
 let object = null;
+let pid = null;
 
-function detectObjectsFromCamera(camera, window) {
-  return function() {
-    const debug = new cv.NamedWindow('Debug');
+function findObject(camera) {
+  const search =  function() {
     camera.read((err, rawImage) => {
-      const filtered = filter(rawImage);
-      if (object === null) {
-        object = findTrackedObject(filtered);
-        console.log('there is no rectangle');
+      console.log('searching...');
+      object = findTrackedObject(rawImage);
+      if (object) {
+        console.log('found!', object);
+        clearInterval(pid);
+        return;
       }
-      else
-        track(rawImage, object);
-      window.show(rawImage);
-      if (window.blockingWaitKey(0, MAGIC_NUMBER) === 27)
-        process.exit(0);
     });
-  }
+  };
+  pid = setInterval(search, MAGIC_NUMBER);
 }
 
-try {
-  const window = new cv.NamedWindow('Video', cv.WINDOW_AUTOSIZE);
-  const camera = new cv.VideoCapture(0);
-  camera.setWidth(CAM_WIDTH);
-  camera.setHeight(CAM_HEIGHT);
-  setInterval(detectObjectsFromCamera(camera, window), MAGIC_NUMBER);
-} catch (e){
-  console.log("Couldn't start camera:", e)
-}
+const camera = new cv.VideoCapture(0);
+camera.setWidth(CAM_WIDTH);
+camera.setHeight(CAM_HEIGHT);
+findObject(camera);
