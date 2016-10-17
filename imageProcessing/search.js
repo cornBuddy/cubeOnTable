@@ -71,9 +71,9 @@ function findBiggestRectangleIndex(contours) {
 
 function getTrackedObject(image, track) {
   const rect = track.track(image);
-  const r = roi(rect);
+  console.log(`rect to track: [${rect}]`);
   const copy = image.copy();
-  copy.roi(r);
+  copy.roi(rect);
   const contours = copy.contours();
   const biggestRectInd = findBiggestRectangleIndex(contours);
   if (biggestRectIndex === -1)
