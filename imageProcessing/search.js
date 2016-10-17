@@ -73,6 +73,7 @@ function getTrackedObject(image, track) {
   const rect = track.track(image);
   console.log(`rect to track: [${rect}]`);
   const copy = image.copy();
+  // FIXME: SIGABORT here
   copy.roi(rect);
   const contours = copy.contours();
   const biggestRectInd = findBiggestRectangleIndex(contours);
