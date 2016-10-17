@@ -54,7 +54,6 @@ function findTrackedObject(rawImage) {
   }
   if (founded) {
     const rect = contours.boundingRect(biggestRectIndex);
-    // Hardbone for OpenCV assertion bug
     const r = [rect.x, rect.y, rect.width + rect.x, rect.height + rect.y];
     console.log(r);
     console.log(`image: [w=${rawImage.width()}, h=${rawImage.height()}]`);
@@ -62,7 +61,6 @@ function findTrackedObject(rawImage) {
         + ` [x=${rect.x}, y=${rect.y}]`);
     return {
       points: points, rect: rect,
-      // assertion failed here
       track: new cv.TrackedObject(rawImage, r, {channel: 'value'}),
     };
   } else
