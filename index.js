@@ -1,6 +1,6 @@
 // TODO: fix segmentation fault error
 const cv = require('opencv');
-const track = require('./imageProcessing').drawCube;
+const drawCube = require('./imageProcessing').drawCube;
 const findTrackedObject = require('./imageProcessing').findTrackedObject;
 
 const CAM_HEIGHT = 240;
