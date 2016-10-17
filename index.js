@@ -34,8 +34,8 @@ function searchForTrack(camera) {
           search();
       });
     };
-    search();
     console.log('search started');
+    search();
   });
 }
 
