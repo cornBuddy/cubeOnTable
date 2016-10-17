@@ -71,11 +71,12 @@ camera.read((err) => {
         i++
         track = findTrack(img);
         console.log('searching...', i);
-        if (i >= 1000)
+        if (i >= 200)
           process.exit(0);
       }
       const rec = track.track(img);
-      img.rectangle([rec[0], rec[1]], [rec[2], rec[3]]);
+      img = filter(img);
+      img.roi(rec[0], rec[1], rec[2] - rec[0], rec[3] - rec[1]);
       window.show(img);
       if (window.blockingWaitKey(0, MAGIC_NUMBER) === ESC)
         process.exit(0);
