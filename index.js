@@ -61,15 +61,25 @@ const camera = initCamera();
 const window = initWindow();
 //searchForTrack(camera)
 //  .then(showImage(window, camera));
-camera.read((err, rawImage) => {
+let track = null;
+let i = 0;
+camera.read((err) => {
   if (err) throw err;
   const cb = () => {
-    const track = findTrack(rawImage);
-    const rec = track.track(rawImage);
-    rawImage.rectangle([rec[0], rec[1]], [rec[2], rec[3]]);
-    window.show(rawImage);
-    if (window.blockingWaitKey(0, MAGIC_NUMBER) === ESC)
-      process.exit(0);
+    camera.read((err, img) => {
+      while (!track) {
+        i++
+        track = findTrack(img);
+        console.log('searching...', i);
+        if (i >= 1000)
+          process.exit(0);
+      }
+      const rec = track.track(img);
+      img.rectangle([rec[0], rec[1]], [rec[2], rec[3]]);
+      window.show(img);
+      if (window.blockingWaitKey(0, MAGIC_NUMBER) === ESC)
+        process.exit(0);
+    });
   };
   setInterval(cb, MAGIC_NUMBER);
 });
