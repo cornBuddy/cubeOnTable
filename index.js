@@ -1,4 +1,5 @@
 // TODO: fix segmentation fault error
+// TODO: promisificate function calls
 const cv = require('opencv');
 const drawCube = require('./imageProcessing').drawCube;
 const findTrack = require('./imageProcessing').findTrack;
