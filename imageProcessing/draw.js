@@ -1,6 +1,7 @@
 const getTrackedObject = require('./search').getTrackedObject;
 
 function drawCube(image, track) {
+  console.log('preparing to draw cube');
   const object = getTrackedObject(image, track);
   // TODO: write some code
   const points = object.points;
