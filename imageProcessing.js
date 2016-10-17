@@ -82,5 +82,9 @@ function track(image, object) {
   return null;
 }
 
+function drawCube(image, object) {
+  return null;
+}
+
 module.exports.findTrackedObject = findTrackedObject;
-module.exports.track = track;
+module.exports.drawCube = drawCube;
