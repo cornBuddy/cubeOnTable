@@ -1,10 +1,10 @@
 const cv = require('opencv');
 
 // TODO: find better constants vaules, bad detection
-const CANNY_LOW = 150;
+const CANNY_LOW = 0;
 const CANNY_HIGH = 300;
 const GAUSSIAN_BLUR_SIZE = [5, 5];
-const DILATE_ITERS = 3;
+const DILATE_ITERS = 1;
 
 const MIN_RECT_AREA = 100;
 const MAX_RECT_AREA = 320 * 240 / 4;
