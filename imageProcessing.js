@@ -1,3 +1,5 @@
+const cv = require('opencv');
+
 // TODO: find better constants vaules, bad detection
 const CANNY_LOW = 80;
 const CANNY_HIGH = 300;
@@ -28,14 +30,14 @@ function findTrackedObject(rawImage) {
   let founded = false;
   let points = [];
   for (let i = 0; i < contours.size(); i++) {
-    if (contours.area(i) < MIN_RECT_AREA || contours.area(i) > MAX_RECT_AREA)
+    if (contours.area(i) < MIN_RECT_AREA
+        || contours.area(i) > MAX_RECT_AREA)
       continue;
     const arcLength = contours.arcLength(i, IS_CLOSED);
     contours.approxPolyDP(i, DELTA * arcLength, IS_CLOSED);
     switch(contours.cornerCount(i)) {
       case 4:
         const r = contours.boundingRect(i);
-        image.rectangle([r.x, r.y], [r.width, r.height], BLUE);
         const currentArea = contours.area(i);
         if (currentArea > contours.area(biggestRectIndex)) {
           founded = true;
@@ -56,7 +58,8 @@ function findTrackedObject(rawImage) {
     const r = [rect.x, rect.y, rect.width, rect.height];
     return {
       points: points, rect: rect,
-      track: new cv.TrackedObject(rawImage, r, {channel: 'value'}),
+      // FIXME: assertion failed here
+      //track: new cv.TrackedObject(rawImage, r, {channel: 'value'}),
     };
   } else
     return null;
