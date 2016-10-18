@@ -51,7 +51,6 @@ function searchForTable(rawImage) {
 function drawAxisAndShow(window) {
   return function(obj) {
     const image = drawAxis(obj.image, obj.points);
-    console.log(obj.rect);
     image.rectangle([obj.rect.x, obj.rect.y],
         [obj.rect.width, obj.rect.height]);
     window.show(image);
