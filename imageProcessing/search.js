@@ -1,10 +1,10 @@
 const cv = require('opencv');
 
-// TODO: find better constants vaules, bad detection
+// DO NOT TOUCH CONTSANTS NOW!
 const CANNY_LOW = 200;
-const CANNY_HIGH = 300;
-const GAUSSIAN_BLUR_SIZE = [5, 5];
-const DILATE_ITERS = 3;
+const CANNY_HIGH = 200;
+const GAUSSIAN_BLUR_SIZE = [7, 7];
+const DILATE_ITERS = 1;
 
 const MIN_RECT_AREA = 100;
 const IS_CLOSED = true;
@@ -12,9 +12,8 @@ const DELTA = 0.01;
 
 function filter(image) {
   const copy = image.copy();
-  copy.gaussianBlur(GAUSSIAN_BLUR_SIZE);
   copy.canny(CANNY_LOW, CANNY_HIGH);
-  copy.dilate(DILATE_ITERS);
+  copy.gaussianBlur(GAUSSIAN_BLUR_SIZE);
   return copy;
 }
 
