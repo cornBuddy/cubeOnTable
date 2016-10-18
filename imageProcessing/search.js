@@ -1,26 +1,25 @@
 const cv = require('opencv');
 
 // TODO: find better constants vaules, bad detection
-const CANNY_LOW = 0;
+const CANNY_LOW = 200;
 const CANNY_HIGH = 300;
 const GAUSSIAN_BLUR_SIZE = [5, 5];
-const DILATE_ITERS = 1;
+const DILATE_ITERS = 3;
 
 const MIN_RECT_AREA = 100;
-const MAX_RECT_AREA = 320 * 240 / 4;
 const IS_CLOSED = true;
-const DELTA = 0.1;
+const DELTA = 0.01;
 
 function filter(image) {
   const copy = image.copy();
   copy.gaussianBlur(GAUSSIAN_BLUR_SIZE);
-  copy.canny(CANNY_LOW, CANNY_LOW);
+  copy.canny(CANNY_LOW, CANNY_HIGH);
   copy.dilate(DILATE_ITERS);
   return copy;
 }
 
 function invalidArea(area) {
-  return area < MIN_RECT_AREA || area > MAX_RECT_AREA;
+  return area < MIN_RECT_AREA;
 }
 
 function getRectPoints(contours, index) {
