@@ -41,7 +41,6 @@ function searchForTable(rawImage) {
   const biggestRectInd = findBiggestRectangleIndex(contours);
   if (biggestRectInd === -1)
     throw new Error('there is no rectangle!');
-  rawImage.drawAllContours(contours, [0, 0, 0], 5);
   return {
     points: getRectPoints(contours, biggestRectInd),
     image: rawImage,
@@ -62,7 +61,6 @@ function drawAxisAndShow(window) {
 }
 
 const window = initWindow();
-const debug = initWindow('debug');
 const path = process.argv[2];
 readImage(path)
   .then(searchForTable)
