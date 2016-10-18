@@ -105,3 +105,4 @@ module.exports.getTrackedObject = getTrackedObject;
 module.exports.findTrack = findTrack;
 module.exports.filter = filter;
 module.exports.getRectPoints = getRectPoints;
+module.exports.findBiggestRectangleIndex = findBiggestRectangleIndex;
