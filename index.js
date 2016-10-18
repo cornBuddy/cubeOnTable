@@ -3,6 +3,9 @@ const cv = require('opencv');
 const filter = require('./imageProcessing').filter
 const drawAxis = require('./imageProcessing').drawAxis;
 const findTrack = require('./imageProcessing').findTrack;
+const getRectPoints = require('./imageProcessing').getRectPoints;
+const findBiggestRectangleIndex
+  = require('./imageProcessing').findBiggestRectangleIndex;
 
 const CAM_HEIGHT = 240;
 const CAM_WIDTH = 320;
@@ -22,13 +25,13 @@ function initWindow() {
 
 function readImage(path) {
   return new Promise((resolve, reject) => {
-    cv.readImage(path), (err, image) => {
+    cv.readImage((path), (err, image) => {
       if (err)
         reject(err);
-      if (im.width() < CAM_WIDTH || im.height() < CAM_HEIGHT)
+      if (image.width() < CAM_WIDTH || image.height() < CAM_HEIGHT)
         reject(new Error('image is too small'));
       resolve(image);
-    };
+    });
   });
 }
 
@@ -44,17 +47,20 @@ function searchForTable(rawImage) {
   };
 }
 
-function drawAxisAndShow(obj) {
-  const image = drawAxis(obj.image, obj.points);
-  window.show(image);
-  if (window.blockingWaitKey(0, MAGIC_NUMBER) === ESC)
-    process.exit(0);
+function drawAxisAndShow(window) {
+  return function(obj) {
+    const image = drawAxis(obj.image, obj.points);
+    window.show(image);
+    if (window.blockingWaitKey(0, 0) === ESC)
+      process.exit(0);
+  };
 }
 
 const window = initWindow();
+const path = process.argv[2];
 readImage(path)
   .then(searchForTable)
-  .then(drawAxisAndShow);
+  .then(drawAxisAndShow(window));
 //let track = null;
 //let i = 0;
 //camera.read((err) => {
