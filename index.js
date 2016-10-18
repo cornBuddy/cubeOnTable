@@ -19,8 +19,8 @@ function initCamera() {
   return camera;
 }
 
-function initWindow() {
-  return new cv.NamedWindow('Tracking', 0);
+function initWindow(name='Tracking') {
+  return new cv.NamedWindow(name, 0);
 }
 
 function readImage(path) {
@@ -41,15 +41,20 @@ function searchForTable(rawImage) {
   const biggestRectInd = findBiggestRectangleIndex(contours);
   if (biggestRectInd === -1)
     throw new Error('there is no rectangle!');
+  rawImage.drawAllContours(contours, [0, 0, 0], 5);
   return {
     points: getRectPoints(contours, biggestRectInd),
     image: rawImage,
+    rect: contours.boundingRect(biggestRectInd),
   };
 }
 
 function drawAxisAndShow(window) {
   return function(obj) {
     const image = drawAxis(obj.image, obj.points);
+    console.log(obj.rect);
+    image.rectangle([obj.rect.x, obj.rect.y],
+        [obj.rect.width, obj.rect.height]);
     window.show(image);
     if (window.blockingWaitKey(0, 0) === ESC)
       process.exit(0);
@@ -57,30 +62,8 @@ function drawAxisAndShow(window) {
 }
 
 const window = initWindow();
+const debug = initWindow('debug');
 const path = process.argv[2];
 readImage(path)
   .then(searchForTable)
   .then(drawAxisAndShow(window));
-//let track = null;
-//let i = 0;
-//camera.read((err) => {
-//  if (err) throw err;
-//  const cb = () => {
-//    camera.read((err, img) => {
-//      while (!track) {
-//        i++
-//        track = findTrack(img);
-//        console.log('searching...', i);
-//        if (i >= 200)
-//          process.exit(0);
-//      }
-//      const rec = track.track(img);
-//      img = filter(img);
-//      img.roi(rec[0], rec[1], rec[2] - rec[0], rec[3] - rec[1]);
-//      window.show(img);
-//      if (window.blockingWaitKey(0, MAGIC_NUMBER) === ESC)
-//        process.exit(0);
-//    });
-//  };
-//  setInterval(cb, MAGIC_NUMBER);
-//});
