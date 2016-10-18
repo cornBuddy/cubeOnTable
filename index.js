@@ -20,18 +20,28 @@ function initWindow() {
   return new cv.NamedWindow('Tracking', 0);
 }
 
-function searchForTable(rawImage) {
+function readImage(path) {
   return new Promise((resolve, reject) => {
-    const filtered = filter(rawImage);
-    const contours = filtered.findContours();
-    const biggestRectInd = findBiggestRectangleIndex(contours);
-    if (biggestRectInd === -1)
-      reject('there is no rectangle!');
-    resolve({
-      points: getRectPoints(contours, biggestRectInd),
-      image: rawImage,
-    });
+    cv.readImage(path), (err, image) => {
+      if (err)
+        reject(err);
+      if (im.width() < CAM_WIDTH || im.height() < CAM_HEIGHT)
+        reject(new Error('image is too small'));
+      resolve(image);
+    };
   });
+}
+
+function searchForTable(rawImage) {
+  const filtered = filter(rawImage);
+  const contours = filtered.findContours();
+  const biggestRectInd = findBiggestRectangleIndex(contours);
+  if (biggestRectInd === -1)
+    throw new Error('there is no rectangle!');
+  return {
+    points: getRectPoints(contours, biggestRectInd),
+    image: rawImage,
+  };
 }
 
 function drawAxisAndShow(obj) {
@@ -42,7 +52,8 @@ function drawAxisAndShow(obj) {
 }
 
 const window = initWindow();
-searchForTable(image)
+readImage(path)
+  .then(searchForTable)
   .then(drawAxisAndShow);
 //let track = null;
 //let i = 0;
