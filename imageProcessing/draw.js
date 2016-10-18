@@ -21,6 +21,10 @@ function drawAxis(image, points) {
     [0, 0, 1,],
   ];
   const dist = [0, 0, 0, 0,];
+  // objp - should be 3d array of points (eg obj.x, obj.y, obj.z)
+  // points - should be 2d array of floats (eg obj.x, obj.y)
+  // problem should be in cameraMatrix or dist
+  // https://github.com/opencv/opencv/blob/master/samples/python/plane_ar.py#L95
   const test = cv.calib3d.solvePnP(objp, points, cameraMatrix, dist);
   return image;
 }
