@@ -1,11 +1,13 @@
 const getTrackedObject = require('./search').getTrackedObject;
 
+// bgr
+const BLUE = [255, 0, 0];
+const GREEN = [0, 255, 0];
+
 function drawAxis(image, points) {
-  console.log('preparing to draw cube');
   const o = points[0];
-  console.log('draw axis');
-  image.line([o.x, o.y], [points[1].x, points[1].y]);
-  image.line([o.x, o.y], [points[2].x, points[2].y]);
+  image.line([o.x, o.y], [points[1].x, points[1].y], BLUE, 10);
+  image.line([o.x, o.y], [points[2].x, points[2].y], GREEN, 10);
   return image;
 }
 
