@@ -46,7 +46,7 @@ function createDistorsions() {
   return dist;
 }
 
-function drawAxis(image, points) {
+function solvePnP(image, points) {
   // objp - should be 3d array of points (eg obj.x, obj.y, obj.z)
   // points - should be 2d array of floats (eg obj.x, obj.y)
   // problem should be in cameraMatrix or dist
@@ -62,8 +62,14 @@ function drawAxis(image, points) {
   const cameraMatrix = createCameraMatrix(image);
   // matFromMatrix
   const dist = createDistorsions();
-  const test = cv.calib3d.solvePnP(objp, points, cameraMatrix, dist);
-  console.log(test);
+  return cv.calib3d.solvePnP(objp, points, cameraMatrix, dist);
+
+}
+
+function drawAxis(image, points) {
+  const test = solvePnP(image, points);
+  console.log('rvec:', test.rvec.col(0));
+  console.log('tvec:', test.tvec.col(0));
   return image;
 }
 
