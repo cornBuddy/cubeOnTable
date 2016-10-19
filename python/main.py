@@ -6,6 +6,7 @@ import cv2
 
 CANNY_LOW = 30
 CANNY_HIGH = 200
+GAUSIAN = (5, 5)
 
 MIN_RECT_AREA = 100
 IS_CLOSED = True
@@ -15,7 +16,7 @@ DELTA = 0.01
 def filt(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     edged = cv2.Canny(image, CANNY_LOW, CANNY_HIGH)
-    blured = cv2.GaussianBlur(edged, (5, 5), 5)
+    blured = cv2.GaussianBlur(edged, GAUSIAN, 5)
     return blured
 
 
