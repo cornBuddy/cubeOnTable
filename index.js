@@ -44,15 +44,12 @@ function searchForTable(rawImage) {
   return {
     points: getRectPoints(contours, biggestRectInd),
     image: rawImage,
-    rect: contours.boundingRect(biggestRectInd),
   };
 }
 
 function drawAxisAndShow(window) {
   return function(obj) {
     const image = drawAxis(obj.image, obj.points);
-    image.rectangle([obj.rect.x, obj.rect.y],
-        [obj.rect.width, obj.rect.height]);
     window.show(image);
     if (window.blockingWaitKey(0, 0) === ESC)
       process.exit(0);
