@@ -15,6 +15,37 @@ function generate3dMatrixOfPoints(points2d) {
   });
 }
 
+function createCameraMatrix(image) {
+  console.log('generating camera matrix');
+  const fx = 0.5 + FOCAL / 50;
+  const w = image.width();
+  const h = image.height();
+  console.log(`fx=${fx}; w=${w}; h=${h}`);
+  let k = cv.Matrix.Zeros(3, 3);
+  k.set(0, 0, fx * w);
+  k.set(0, 2, 0.5 * (w - 1));
+  k.set(1, 1, fx * w);
+  k.set(1, 2, 0.5 * (h - 1));
+  k.set(2, 2, 1);
+  // output:
+  // [fx * w, 0,      0.5 * (w - 1),],
+  // [0,      fx * w, 0.5 * (h - 1),],
+  // [0,      0,      1,            ],
+  console.log('camera matrix:');
+  for (let i = 0; i < 3; i++)
+    console.log(k.row(i));
+  return k;
+}
+
+function createDistorsions() {
+  console.log('generating distorsions');
+  let dist = cv.Matrix.Zeros(1, 4);
+  console.log('distorsions:', dist.row(0));
+  // output:
+  // [0, 0, 0, 0]
+  return dist;
+}
+
 function drawAxis(image, points) {
   // objp - should be 3d array of points (eg obj.x, obj.y, obj.z)
   // points - should be 2d array of floats (eg obj.x, obj.y)
@@ -27,19 +58,10 @@ function drawAxis(image, points) {
   // objp - points3fFromArray
   // points - points2fFromArray
   const objp = generate3dMatrixOfPoints(points);
-  const fx = 0.5 + FOCAL / 50;
-  const w = image.width();
-  const h = image.height();
-  // hardbone
   // matFromMatrix
-  const cameraMatrix = [
-    [fx * w, 0,      0.5 * (w - 1),],
-    [0,      fx * w, 0.5 * (h - 1),],
-    [0,      0,      1,            ],
-  ];
-    // matFromMatrix
-  const dist = [0, 0, 0, 0,];
-  console.log('camera matrix: ', cameraMatrix);
+  const cameraMatrix = createCameraMatrix(image);
+  // matFromMatrix
+  const dist = createDistorsions();
   const test = cv.calib3d.solvePnP(objp, points, cameraMatrix, dist);
   console.log(test);
   return image;
