@@ -19,20 +19,10 @@ def filt(image):
     return blured
 
 
-def find_biggest_rect_contour(cnts):
-    biggest = sorted(cnts, key=cv2.contourArea, reverse=True)[0]
-    p1 = sorted(biggest, key=itemgetter(0), reverse=False)[0]
-    p2 = sorted(biggest, key=itemgetter(1), reverse=False)[0]
-    p3 = sorted(biggest, key=itemgetter(0), reverse=True)[0]
-    p4 = sorted(biggest, key=itemgetter(1), reverse=True)[0]
-    return p1, p2, p3, p4
-
-
 def show(image):
     cv2.imshow('image', image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
 
 
 def search_for_table_corners(raw_image):
