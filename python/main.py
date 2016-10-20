@@ -87,19 +87,22 @@ def get_object_points(corners):
         [x4, y4, 0]
     ])
 
+
 def draw_cube(raw_image, table_corners):
-    canvas = raw_image.copy()
-    gray = cv2.cvtColor(raw_image, cv2.COLOR_BGR2GRAY)
     object_points = get_object_points(table_corners)
     axis = np.float32([[0, 0, 0], [0, 3, 0], [3, 3, 0], [3, 0, 0],
-            [0, 0, -3],[0, 3, -3],[3, 3, -3],[3, 0, -3]])
+            [0, 0, -3], [0, 3, -3], [3, 3, -3], [3, 0, -3]])
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER,
             30, 0.001)
-    cv2.cornerSubPix(gray, table_corners, (11, 11), (-1, -1), criteria)
+    gray = cv2.cvtColor(raw_image, cv2.COLOR_BGR2GRAY)
+    corners_subpxs = cv2.cornerSubPix(gray, table_corners,
+            (11, 11), (-1, -1), criteria)
+    canvas = raw_image.copy()
     camera_matrix = generate_camera_matrix(canvas)
     distorsions = generate_distorsions()
-    rvecs, tvecs, _ = cv2.solvePnPRansac(object_points, table_corners,
+    _, rvecs, tvecs = cv2.solvePnP(object_points, corners_subpxs,
             camera_matrix, distorsions)
+    print(rvecs, tvecs)
     projection_points, _ = cv2.projectPoints(axis, rvecs, tvecs,
             camera_matrix, distorsions)
     canvas = draw(raw_image, projection_points)
