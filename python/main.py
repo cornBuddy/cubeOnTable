@@ -12,6 +12,11 @@ MIN_RECT_AREA = 100
 IS_CLOSED = True
 DELTA = 0.01
 
+# bgr
+BLUE = (255, 0, 0)
+GREEN = (0, 255, 0)
+RED = (0, 0, 255)
+
 
 def show(image):
     cv2.namedWindow('image', cv2.WINDOW_NORMAL)
@@ -36,17 +41,27 @@ def search_for_table_corners(raw_image):
         cnt_len = cv2.arcLength(cnt, IS_CLOSED)
         approx = cv2.approxPolyDP(cnt, DELTA * cnt_len, IS_CLOSED)
         if len(approx) == 4:
-            return approx
+            return sorted(approx, key=lambda x: x[0][0], reverse=False)
     return None
 
+
 def draw_axis(raw_image, points):
-    pass
+    copy = raw_image.copy()
+    o = tuple(points[0][0])
+    x = tuple(points[1][0])
+    y = tuple(points[2][0])
+    print(o, x, y)
+    cv2.line(copy, o, x, BLUE, 5)
+    cv2.line(copy, o, y, RED, 5)
+    return copy
 
 
 def main():
     path = sys.argv[1]
     raw_image = cv2.imread(path)
     table_corners = search_for_table_corners(raw_image)
+    axis = draw_axis(raw_image, table_corners)
+    show(axis)
     if table_corners is None:
         raise Exception('there is no table!')
 
