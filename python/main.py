@@ -43,9 +43,7 @@ def search_for_table_corners(raw_image):
         approx = cv2.approxPolyDP(cnt, DELTA * cnt_len, IS_CLOSED)
         if len(approx) == 4:
             # return sorted(approx, key=lambda x: x[0][0], reverse=False)
-            crns = sorted(approx, key=lambda x: x[0][0], reverse=False)
-            corners = [c[0] for c in crns]
-            return np.asarray(corners)
+            return approx
     return None
 
 
@@ -78,22 +76,26 @@ def generate_distorsions():
 
 
 def get_object_points(corners):
-    objp = np.zeros((6*7,3), np.float32)
-    #objp[:,:2] = np.mgrid[0:7,0:6].T.reshape(-1,2)
-    print(objp.shape)
-    return objp
-
+    x1, y1 = corners[0][0]
+    x2, y2 = corners[1][0]
+    x3, y3 = corners[2][0]
+    x4, y4 = corners[3][0]
+    return np.float32([
+        [x1, y1, 0],
+        [x2, y2, 0],
+        [x3, y3, 0],
+        [x4, y4, 0]
+    ])
 
 def draw_cube(raw_image, table_corners):
     canvas = raw_image.copy()
-    print(canvas.shape)
-    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER,
-            30, 0.001)
+    gray = cv2.cvtColor(raw_image, cv2.COLOR_BGR2GRAY)
     object_points = get_object_points(table_corners)
     axis = np.float32([[0, 0, 0], [0, 3, 0], [3, 3, 0], [3, 0, 0],
             [0, 0, -3],[0, 3, -3],[3, 3, -3],[3, 0, -3]])
-    #corners_sub_pixs = cv2.cornerSubPix(canvas,
-    #        table_corners, (11, 11), (-1, -1), criteria)
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER,
+            30, 0.001)
+    cv2.cornerSubPix(gray, table_corners, (11, 11), (-1, -1), criteria)
     camera_matrix = generate_camera_matrix(canvas)
     distorsions = generate_distorsions()
     rvecs, tvecs, _ = cv2.solvePnPRansac(object_points, table_corners,
@@ -104,20 +106,13 @@ def draw_cube(raw_image, table_corners):
     return canvas
 
 
-def test():
-    img = cv2.imread('studying/positive/chessboard.jpg')
-    gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    ret, corners = cv2.findChessboardCorners(gray, (7, 6), None)
-    print(ret)
-
-
 def main():
     path = sys.argv[1]
     raw_image = cv2.imread(path)
     table_corners = search_for_table_corners(raw_image)
     if table_corners is None:
         raise Exception('there is no table!')
-    result = draw_cube(raw_image, table_corners)
+    result = draw_cube(raw_image, np.float32(table_corners))
     show(result)
 
 
