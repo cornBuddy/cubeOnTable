@@ -48,14 +48,10 @@ def search_for_table_corners(raw_image):
 
 
 def draw(img, corners, imgpts):
-    imgpts = np.int32(imgpts).reshape(-1,2)
-    # draw ground floor in green
-    img = cv2.drawContours(img, [imgpts[:4]],-1,(0,255,0),-3)
-    # draw pillars in blue color
-    for i,j in zip(range(4),range(4,8)):
-        img = cv2.line(img, tuple(imgpts[i]), tuple(imgpts[j]),(255),3)
-    # draw top layer in red color
-    img = cv2.drawContours(img, [imgpts[4:]],-1,(0,0,255),3)
+    corner = tuple(corners[0].ravel())
+    img = cv2.line(img, corner, tuple(imgpts[0].ravel()), (255,0,0), 5)
+    img = cv2.line(img, corner, tuple(imgpts[1].ravel()), (0,255,0), 5)
+    img = cv2.line(img, corner, tuple(imgpts[2].ravel()), (0,0,255), 5)
     return img
 
 
@@ -87,22 +83,56 @@ def get_object_points(corners):
     ])
 
 
-def draw_cube(raw_image, table_corners):
-    object_points = get_object_points(table_corners)
-    axis = np.float32([[0, 0, 0], [0, 3, 0], [3, 3, 0], [3, 0, 0],
-            [0, 0, -3], [0, 3, -3], [3, 3, -3], [3, 0, -3]])
+def generate_axis(a):
+    # axis = np.float32([
+    #     [0, 0, 0],
+    #     [0, a, 0],
+    #     [a, a, 0],
+    #     [a, 0, 0],
+    #     [0, 0, -a],
+    #     [0, a, -a],
+    #     [a, a, -a],
+    #     [a, 0, -a]])
+    axis = np.float32([[a,0,0], [0,a,0], [0,0,-a]]).reshape(-1,3)
+    return axis
+
+
+def get_corners_subpixels(raw_image, corners):
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER,
             30, 0.001)
     gray = cv2.cvtColor(raw_image, cv2.COLOR_BGR2GRAY)
-    corners_subpxs = cv2.cornerSubPix(gray, table_corners,
-            (11, 11), (-1, -1), criteria)
-    canvas = raw_image.copy()
-    camera_matrix = generate_camera_matrix(canvas)
+    # corners_subpxs = cv2.cornerSubPix(gray, table_corners,
+    #         (11, 11), (-1, -1), criteria)
+    corners_subpxs = corners
+    return corners_subpxs
+
+
+def create_canvas(image):
+    return image.copy()
+
+
+def get_projection_points(raw_image, table_corners):
+    print('table corners: ', table_corners)
+    object_points = get_object_points(table_corners)
+    print('object points: ', object_points)
+    corners_subpxs = get_corners_subpixels(raw_image, table_corners)
+    print('corners subpixels: ', corners_subpxs)
+    camera_matrix = generate_camera_matrix(raw_image)
     distorsions = generate_distorsions()
     _, rvecs, tvecs = cv2.solvePnP(object_points, corners_subpxs,
             camera_matrix, distorsions)
+    size = round(raw_image.shape[0] / 10)
+    axis = generate_axis(size)
     projection_points, _ = cv2.projectPoints(axis, rvecs, tvecs,
             camera_matrix, distorsions)
+    print('projection points: ', projection_points)
+    return projection_points, corners_subpxs
+
+
+def draw_cube(raw_image, table_corners):
+    projection_points, corners_subpxs = get_projection_points(raw_image,
+            table_corners)
+    canvas = create_canvas(raw_image)
     canvas = draw(raw_image, corners_subpxs, projection_points)
     return canvas
 
