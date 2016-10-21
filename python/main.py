@@ -112,8 +112,6 @@ def get_projection_points(raw_image, table_corners):
     axis = generate_axis(size)
     projection_points, _ = cv2.projectPoints(axis, rvecs, tvecs,
             camera_matrix, distorsions)
-    for p in projection_points:
-        raw_image = cv2.circle(raw_image, tuple(p.ravel()[0:2]), 5, (0,0,0), -1)
     print('projection points: ', projection_points)
     return projection_points, corners_subpxs
 
