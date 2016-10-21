@@ -42,7 +42,7 @@ def search_for_table_corners(raw_image):
         cnt_len = cv2.arcLength(cnt, IS_CLOSED)
         approx = cv2.approxPolyDP(cnt, DELTA * cnt_len, IS_CLOSED)
         if len(approx) == 4:
-            # return sorted(approx, key=lambda x: x[0][0], reverse=False)
+            cv2.drawContours(raw_image, [approx], -1, (0, 0, 0), 1)
             return np.float32(approx)
     return None
 
@@ -84,15 +84,6 @@ def get_object_points(corners):
 
 
 def generate_axis(a):
-    #axis = np.float32([
-    #    [0, 0, 0],
-    #    [0, a, 0],
-    #    [a, a, 0],
-    #    [a, 0, 0],
-    #    [0, 0, -a],
-    #    [0, a, -a],
-    #    [a, a, -a],
-    #    [a, 0, -a]])
     axis = np.float32([[a,0,0], [0,a,0], [0,0,-a]]).reshape(-1,3)
     return axis
 
@@ -101,9 +92,8 @@ def get_corners_subpixels(raw_image, corners):
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER,
             30, 0.001)
     gray = cv2.cvtColor(raw_image, cv2.COLOR_BGR2GRAY)
-    # corners_subpxs = cv2.cornerSubPix(gray, table_corners,
-    #         (11, 11), (-1, -1), criteria)
-    corners_subpxs = corners
+    corners_subpxs = cv2.cornerSubPix(gray, corners,
+            (11, 11), (-1, -1), criteria)
     return corners_subpxs
 
 
@@ -116,12 +106,14 @@ def get_projection_points(raw_image, table_corners):
     corners_subpxs = get_corners_subpixels(raw_image, table_corners)
     camera_matrix = generate_camera_matrix(raw_image)
     distorsions = generate_distorsions()
-    _, rvecs, tvecs = cv2.solvePnP(object_points, corners_subpxs,
+    _, rvecs, tvecs, _ = cv2.solvePnPRansac(object_points, corners_subpxs,
             camera_matrix, distorsions)
     size = round(raw_image.shape[0] / 10)
     axis = generate_axis(size)
-    projection_points, jac = cv2.projectPoints(axis, rvecs, tvecs,
+    projection_points, _ = cv2.projectPoints(axis, rvecs, tvecs,
             camera_matrix, distorsions)
+    for p in projection_points:
+        raw_image = cv2.circle(raw_image, tuple(p.ravel()[0:2]), 5, (0,0,0), -1)
     print('projection points: ', projection_points)
     return projection_points, corners_subpxs
 
@@ -140,7 +132,7 @@ def main():
     table_corners = search_for_table_corners(raw_image)
     if table_corners is None:
         raise Exception('there is no table!')
-    result = draw_cube(raw_image, np.float32(table_corners))
+    result = draw_cube(raw_image, table_corners)
     show(result)
 
 
