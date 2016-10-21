@@ -43,7 +43,7 @@ def search_for_table_corners(raw_image):
         approx = cv2.approxPolyDP(cnt, DELTA * cnt_len, IS_CLOSED)
         if len(approx) == 4:
             # return sorted(approx, key=lambda x: x[0][0], reverse=False)
-            return approx
+            return np.float32(approx)
     return None
 
 
@@ -79,20 +79,20 @@ def get_object_points(corners):
         [x1, y1, 0],
         [x2, y2, 0],
         [x3, y3, 0],
-        [x4, y4, 0]
+        [x4, y4, 0],
     ])
 
 
 def generate_axis(a):
-    # axis = np.float32([
-    #     [0, 0, 0],
-    #     [0, a, 0],
-    #     [a, a, 0],
-    #     [a, 0, 0],
-    #     [0, 0, -a],
-    #     [0, a, -a],
-    #     [a, a, -a],
-    #     [a, 0, -a]])
+    #axis = np.float32([
+    #    [0, 0, 0],
+    #    [0, a, 0],
+    #    [a, a, 0],
+    #    [a, 0, 0],
+    #    [0, 0, -a],
+    #    [0, a, -a],
+    #    [a, a, -a],
+    #    [a, 0, -a]])
     axis = np.float32([[a,0,0], [0,a,0], [0,0,-a]]).reshape(-1,3)
     return axis
 
@@ -112,18 +112,15 @@ def create_canvas(image):
 
 
 def get_projection_points(raw_image, table_corners):
-    print('table corners: ', table_corners)
     object_points = get_object_points(table_corners)
-    print('object points: ', object_points)
     corners_subpxs = get_corners_subpixels(raw_image, table_corners)
-    print('corners subpixels: ', corners_subpxs)
     camera_matrix = generate_camera_matrix(raw_image)
     distorsions = generate_distorsions()
     _, rvecs, tvecs = cv2.solvePnP(object_points, corners_subpxs,
             camera_matrix, distorsions)
     size = round(raw_image.shape[0] / 10)
     axis = generate_axis(size)
-    projection_points, _ = cv2.projectPoints(axis, rvecs, tvecs,
+    projection_points, jac = cv2.projectPoints(axis, rvecs, tvecs,
             camera_matrix, distorsions)
     print('projection points: ', projection_points)
     return projection_points, corners_subpxs
