@@ -64,14 +64,11 @@ def generate_camera_matrix(image):
     cx = w / 2
     cy = h / 2
     mtx = np.zeros((3, 3), np.float32)
-    mtx[0, 0] = fx
-    mtx[0, 2] = cx
-    mtx[1, 1] = fy
+    mtx[0, 0] = fx # [ fx  0  cx ]
+    mtx[0, 2] = cx # [  0 fy  cy ]
+    mtx[1, 1] = fy # [  0  0   1 ]
     mtx[1, 2] = cy
     mtx[2, 2] = 1
-    # [ fx  0  cx ]
-    # [  0 fy  cy ]
-    # [  0  0   1 ]
     return mtx
 
 
