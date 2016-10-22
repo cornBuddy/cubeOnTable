@@ -118,13 +118,13 @@ def estimate_pose(raw_image, table_corners):
     distorsions = generate_distorsions()
     rvec = np.zeros((3, 1), np.float32)
     tvec = np.zeros((3, 1), np.float32)
-    use_extrinsic_guess = False
     rotation_vec, translation_vec = cv2.solvePnPRansac(object_points,
             corners_subpxs, camera_matrix, distorsions, iterationsCount=500,
             reprojectionError=50)[1:3]
-    print(rotation_vec)
-    print(translation_vec)
-    return rotation_vec, translation_vec, camera_matrix, distorsions, corners_subpxs
+    print('rotation vector: \n', rotation_vec, '\n', '-' * 70)
+    print('translation vector: \n', translation_vec, '\n', '-' * 70)
+    return rotation_vec, translation_vec, camera_matrix, distorsions, \
+        corners_subpxs
 
 
 def create_canvas(image):
@@ -157,5 +157,17 @@ def main():
     show(result)
 
 
+def show_filtered():
+    path = sys.argv[1]
+    raw_image = cv2.imread(path)
+    result = filt(raw_image)
+    show(result)
+
+
 if __name__ == '__main__':
-    main()
+    test = len(sys.argv) == 3
+    if test:
+        show_filtered()
+    else:
+        main()
+
