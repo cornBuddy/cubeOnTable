@@ -40,16 +40,16 @@ def search_for_table_corners(raw_image):
         cnt_len = cv2.arcLength(cnt, IS_CLOSED)
         approx = cv2.approxPolyDP(cnt, DELTA * cnt_len, IS_CLOSED)
         if len(approx) == 4:
-            cv2.drawContours(raw_image, [approx], -1, (0, 0, 0), 1)
+            cv2.drawContours(raw_image, [approx], -1, (0, 0, 0), 4)
             return np.float32(approx)
     return None
 
 
 def draw(img, corners, imgpts):
     corner = tuple(corners[0].ravel())
-    img = cv2.line(img, corner, tuple(imgpts[0].ravel()), (255,0,0), 5)
-    img = cv2.line(img, corner, tuple(imgpts[1].ravel()), (0,255,0), 5)
-    img = cv2.line(img, corner, tuple(imgpts[2].ravel()), (0,0,255), 5)
+    img = cv2.line(img, corner, tuple(imgpts[0].ravel()), BLUE, 5)
+    img = cv2.line(img, corner, tuple(imgpts[1].ravel()), GREEN, 5)
+    img = cv2.line(img, corner, tuple(imgpts[2].ravel()), RED, 5)
     return img
 
 
@@ -106,23 +106,37 @@ def get_corners_subpixels(raw_image, corners):
     return corners_subpxs
 
 
+def get_rt_matrix(rmat, tvec):
+    rtmat = np.zeros((3, 4), np.float32)
+
+
+
+def estimate_pose(raw_image, table_corners):
+    object_points = get_object_points(table_corners)
+    corners_subpxs = get_corners_subpixels(raw_image, table_corners)
+    camera_matrix = generate_camera_matrix(raw_image)
+    distorsions = generate_distorsions()
+    rvec = np.zeros((3, 1), np.float32)
+    tvec = np.zeros((3, 1), np.float32)
+    use_extrinsic_guess = False
+    rotation_vec, translation_vec = cv2.solvePnPRansac(object_points,
+            corners_subpxs, camera_matrix, distorsions, iterationsCount=500,
+            reprojectionError=50)[1:3]
+    print(rotation_vec)
+    print(translation_vec)
+    return rotation_vec, translation_vec, camera_matrix, distorsions, corners_subpxs
+
+
 def create_canvas(image):
     return image.copy()
 
 
 def get_projection_points(raw_image, table_corners):
-    object_points = get_object_points(table_corners)
-    corners_subpxs = get_corners_subpixels(raw_image, table_corners)
-    camera_matrix = generate_camera_matrix(raw_image)
-    distorsions = generate_distorsions()
-    _, rvecs, tvecs, _ = cv2.solvePnPRansac(object_points, corners_subpxs,
-            camera_matrix, distorsions)
+    rvecs, tvecs, mcam, dist, corn2 = estimate_pose(raw_image, table_corners)
     size = round(raw_image.shape[0] / 10)
     axis = generate_axis(size)
-    projection_points, _ = cv2.projectPoints(axis, rvecs, tvecs,
-            camera_matrix, distorsions)
-    print('projection points: ', projection_points)
-    return projection_points, corners_subpxs
+    projection_points = cv2.projectPoints(axis, rvecs, tvecs, mcam, dist)[0]
+    return projection_points, corn2
 
 
 def draw_cube(raw_image, table_corners):
