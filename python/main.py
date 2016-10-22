@@ -46,10 +46,11 @@ def search_for_table_corners(raw_image):
 
 
 def draw(img, corners, imgpts):
+    # hardbone
     corner = tuple(corners[0].ravel())
-    img = cv2.line(img, corner, tuple(imgpts[0].ravel()), BLUE, 5)
-    img = cv2.line(img, corner, tuple(imgpts[1].ravel()), GREEN, 5)
-    img = cv2.line(img, corner, tuple(imgpts[2].ravel()), RED, 5)
+    img = cv2.line(img, corner, tuple(corners[1].ravel()), BLUE, 5)
+    img = cv2.line(img, corner, tuple(corners[3].ravel()), GREEN, 5)
+    img = cv2.line(img, corner, tuple(imgpts[1].ravel()), RED, 5)
     return img
 
 
@@ -82,8 +83,9 @@ def get_object_points(corners):
     x3, y3 = corners[2][0]
     x4, y4 = corners[3][0]
     return np.float32([
-        [x1, y1, 0],
+        # hardbone
         [x2, y2, 0],
+        [x1, y1, 0],
         [x3, y3, 0],
         [x4, y4, 0],
     ])
