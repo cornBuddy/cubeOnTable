@@ -16,8 +16,6 @@ BLUE = (255, 0, 0)
 GREEN = (0, 255, 0)
 RED = (0, 0, 255)
 
-FOCAL = 50 # [25; 50] -> [focal; plane]
-
 
 def show(image):
     cv2.namedWindow('image', cv2.WINDOW_NORMAL)
@@ -56,13 +54,24 @@ def draw(img, corners, imgpts):
 
 
 def generate_camera_matrix(image):
-    fx = 0.5 + FOCAL / 50
-    h, w, _ = image.shape
+    h, w = image.shape[:2]
+    # let it be full frame matrix
+    sx, sy = (36, 24)
+    # focus length
+    f = 50
+    fx = w * f / sx
+    fy = h * f / sy
+    cx = w / 2
+    cy = h / 2
     mtx = np.zeros((3, 3), np.float32)
-    mtx[0, 0] = mtx[1, 1] = fx * w
-    mtx[0, 2] = 0.5 * (w - 1)
-    mtx[1, 2] = 0.5 * (h - 1)
+    mtx[0, 0] = fx
+    mtx[0, 2] = cx
+    mtx[1, 1] = fy
+    mtx[1, 2] = cy
     mtx[2, 2] = 1
+    # [ fx  0  cx ]
+    # [  0 fy  cy ]
+    # [  0  0   1 ]
     return mtx
 
 
