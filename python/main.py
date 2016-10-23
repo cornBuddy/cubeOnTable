@@ -15,6 +15,7 @@ DELTA = 0.01
 BLUE = (255, 0, 0)
 GREEN = (0, 255, 0)
 RED = (0, 0, 255)
+BLACK = (0, 0, 0)
 
 
 def show(image):
@@ -40,17 +41,16 @@ def search_for_table_corners(raw_image):
         cnt_len = cv2.arcLength(cnt, IS_CLOSED)
         approx = cv2.approxPolyDP(cnt, DELTA * cnt_len, IS_CLOSED)
         if len(approx) == 4:
-            cv2.drawContours(raw_image, [approx], -1, (0, 0, 0), 4)
+            cv2.drawContours(raw_image, [approx], -1, BLACK, 4)
             return np.float32(approx)
     return None
 
 
 def draw(img, corners, imgpts):
-    # hardbone
     corner = tuple(corners[0].ravel())
-    img = cv2.line(img, corner, tuple(corners[1].ravel()), BLUE, 5)
-    img = cv2.line(img, corner, tuple(corners[3].ravel()), GREEN, 5)
-    img = cv2.line(img, corner, tuple(imgpts[1].ravel()), RED, 5)
+    img = cv2.line(img, corner, tuple(imgpts[0].ravel()), BLUE, 5)
+    img = cv2.line(img, corner, tuple(imgpts[1].ravel()), GREEN, 5)
+    img = cv2.line(img, corner, tuple(imgpts[2].ravel()), RED, 5)
     return img
 
 
@@ -110,17 +110,19 @@ def get_rt_matrix(rmat, tvec):
 
 
 def estimate_pose(raw_image, table_corners):
+    print('table_corners:\n', table_corners, '\n', '-' * 70)
     object_points = get_object_points(table_corners)
+    print('object_points:\n', object_points, '\n', '-' * 70)
     corners_subpxs = get_corners_subpixels(raw_image, table_corners)
+    print('corners_subpxs:\n', corners_subpxs, '\n', '-' * 70)
     camera_matrix = generate_camera_matrix(raw_image)
+    print('camera_matrix:\n', corners_subpxs, '\n', '-' * 70)
     distorsions = generate_distorsions()
-    rvec = np.zeros((3, 1), np.float32)
-    tvec = np.zeros((3, 1), np.float32)
     rotation_vec, translation_vec = cv2.solvePnPRansac(object_points,
             corners_subpxs, camera_matrix, distorsions, iterationsCount=500,
             reprojectionError=50)[1:3]
-    print('rotation vector: \n', rotation_vec, '\n', '-' * 70)
-    print('translation vector: \n', translation_vec, '\n', '-' * 70)
+    print('rotation_vec:\n', rotation_vec, '\n', '-' * 70)
+    print('translation_vec:\n', translation_vec, '\n', '-' * 70)
     return rotation_vec, translation_vec, camera_matrix, distorsions, \
         corners_subpxs
 
@@ -134,6 +136,7 @@ def get_projection_points(raw_image, table_corners):
     size = round(raw_image.shape[0] / 10)
     axis = generate_axis(size)
     projection_points = cv2.projectPoints(axis, rvecs, tvecs, mcam, dist)[0]
+    print('projection_points:\n', projection_points, '\n', '-' * 70)
     return projection_points, corn2
 
 
@@ -153,6 +156,7 @@ def main():
         raise Exception('there is no table!')
     result = draw_cube(raw_image, table_corners)
     show(result)
+    return result
 
 
 def show_filtered():
@@ -163,9 +167,10 @@ def show_filtered():
 
 
 if __name__ == '__main__':
-    test = len(sys.argv) == 3
-    if test:
-        show_filtered()
+    if len(sys.argv) == 3:
+        result = main()
+        output_path = sys.argv[2]
+        cv2.imwrite(output_path, result)
     else:
-        main()
+        show_filtered()
 
