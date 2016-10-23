@@ -112,7 +112,7 @@ def estimate_pose(raw_image, table_corners):
     corners_subpxs = get_corners_subpixels(raw_image, table_corners)
     print('corners_subpxs:\n', corners_subpxs, '\n', '-' * 70)
     camera_matrix = generate_camera_matrix(raw_image)
-    print('camera_matrix:\n', corners_subpxs, '\n', '-' * 70)
+    print('camera_matrix:\n', camera_matrix, '\n', '-' * 70)
     distorsions = generate_distorsions()
     rotation_vec, translation_vec = cv2.solvePnPRansac(object_points,
             corners_subpxs, camera_matrix, distorsions, iterationsCount=500,
