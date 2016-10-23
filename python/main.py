@@ -105,10 +105,6 @@ def get_corners_subpixels(raw_image, corners):
     return corners_subpxs
 
 
-def get_rt_matrix(rmat, tvec):
-    rtmat = np.zeros((3, 4), np.float32)
-
-
 def estimate_pose(raw_image, table_corners):
     print('table_corners:\n', table_corners, '\n', '-' * 70)
     object_points = get_object_points(table_corners)
