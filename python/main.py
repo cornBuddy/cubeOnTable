@@ -50,11 +50,6 @@ def search_for_table_corners(raw_image):
 
 
 def draw(img, corners, imgpts):
-    #corner = tuple(corners[0].ravel())
-    #img = cv2.line(img, corner, tuple(imgpts[0].ravel()), BLUE, 5)
-    #img = cv2.line(img, corner, tuple(imgpts[1].ravel()), GREEN, 5)
-    #img = cv2.line(img, corner, tuple(imgpts[2].ravel()), RED, 5)
-    #return img
     imgpts = np.int32(imgpts).reshape(-1,2)
     # draw ground floor in green
     img = cv2.drawContours(img, [imgpts[:4]],-1,(0,255,0),-3)
@@ -99,9 +94,9 @@ def get_object_points(corners):
 
 
 def generate_axis():
-    #axis = np.float32([[1,0,0], [0,1,0], [0,0,-1]]).reshape(-1,3)
-    axis = np.float32([[0,0,0], [0,1,0], [1,1,0], [1,0,0],
-                   [0,0,-1],[0,1,-1],[1,1,-1],[1,0,-1] ])
+    a = 0.1
+    axis = np.float32([[0,0,0], [0,a,0], [a,a,0], [a,0,0],
+                   [0,0,-a],[0,a,-a],[a,a,-a],[a,0,-a] ])
     return axis
 
 
