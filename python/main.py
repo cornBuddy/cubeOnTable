@@ -17,6 +17,9 @@ GREEN = (0, 255, 0)
 RED = (0, 0, 255)
 BLACK = (0, 0, 0)
 
+TABLE_WIDTH = 1
+TABLE_HEIGHT = 2
+
 
 def show(image):
     cv2.namedWindow('image', cv2.WINDOW_NORMAL)
@@ -47,10 +50,19 @@ def search_for_table_corners(raw_image):
 
 
 def draw(img, corners, imgpts):
-    corner = tuple(corners[0].ravel())
-    img = cv2.line(img, corner, tuple(imgpts[0].ravel()), BLUE, 5)
-    img = cv2.line(img, corner, tuple(imgpts[1].ravel()), GREEN, 5)
-    img = cv2.line(img, corner, tuple(imgpts[2].ravel()), RED, 5)
+    #corner = tuple(corners[0].ravel())
+    #img = cv2.line(img, corner, tuple(imgpts[0].ravel()), BLUE, 5)
+    #img = cv2.line(img, corner, tuple(imgpts[1].ravel()), GREEN, 5)
+    #img = cv2.line(img, corner, tuple(imgpts[2].ravel()), RED, 5)
+    #return img
+    imgpts = np.int32(imgpts).reshape(-1,2)
+    # draw ground floor in green
+    img = cv2.drawContours(img, [imgpts[:4]],-1,(0,255,0),-3)
+    # draw pillars in blue color
+    for i,j in zip(range(4),range(4,8)):
+        img = cv2.line(img, tuple(imgpts[i]), tuple(imgpts[j]),(255),3)
+    # draw top layer in red color
+    img = cv2.drawContours(img, [imgpts[4:]],-1,(0,0,255),3)
     return img
 
 
@@ -78,21 +90,18 @@ def generate_distorsions():
 
 
 def get_object_points(corners):
-    x1, y1 = corners[0][0]
-    x2, y2 = corners[1][0]
-    x3, y3 = corners[2][0]
-    x4, y4 = corners[3][0]
     return np.float32([
-        # hardbone
-        [x2, y2, 0],
-        [x1, y1, 0],
-        [x3, y3, 0],
-        [x4, y4, 0],
+        [0, 0, 0],
+        [TABLE_WIDTH, 0, 0],
+        [0, TABLE_HEIGHT, 0],
+        [TABLE_WIDTH, TABLE_HEIGHT, 0],
     ])
 
 
-def generate_axis(a):
-    axis = np.float32([[a,0,0], [0,a,0], [0,0,-a]]).reshape(-1,3)
+def generate_axis():
+    #axis = np.float32([[1,0,0], [0,1,0], [0,0,-1]]).reshape(-1,3)
+    axis = np.float32([[0,0,0], [0,1,0], [1,1,0], [1,0,0],
+                   [0,0,-1],[0,1,-1],[1,1,-1],[1,0,-1] ])
     return axis
 
 
@@ -114,9 +123,9 @@ def estimate_pose(raw_image, table_corners):
     camera_matrix = generate_camera_matrix(raw_image)
     print('camera_matrix:\n', camera_matrix, '\n', '-' * 70)
     distorsions = generate_distorsions()
-    rotation_vec, translation_vec = cv2.solvePnPRansac(object_points,
-            corners_subpxs, camera_matrix, distorsions, iterationsCount=500,
-            reprojectionError=50)[1:3]
+    rotation_vec, translation_vec = cv2.solvePnP(object_points,
+            corners_subpxs, camera_matrix, distorsions,
+            flags=cv2.SOLVEPNP_P3P)[1:3]
     print('rotation_vec:\n', rotation_vec, '\n', '-' * 70)
     print('translation_vec:\n', translation_vec, '\n', '-' * 70)
     return rotation_vec, translation_vec, camera_matrix, distorsions, \
@@ -129,8 +138,7 @@ def create_canvas(image):
 
 def get_projection_points(raw_image, table_corners):
     rvecs, tvecs, mcam, dist, corn2 = estimate_pose(raw_image, table_corners)
-    size = round(raw_image.shape[0] / 10)
-    axis = generate_axis(size)
+    axis = generate_axis()
     projection_points = cv2.projectPoints(axis, rvecs, tvecs, mcam, dist)[0]
     print('projection_points:\n', projection_points, '\n', '-' * 70)
     return projection_points, corn2
