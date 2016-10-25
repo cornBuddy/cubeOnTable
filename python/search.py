@@ -31,7 +31,7 @@ def search_for_table_corners(raw_image):
     for cnt in cnts:
         cnt_len = cv2.arcLength(cnt, IS_CLOSED)
         approx = cv2.approxPolyDP(cnt, DELTA * cnt_len, IS_CLOSED)
-        if len(approx) == 4:
+        if len(approx) == 4 and cv2.contourArea(approx) > 100:
             cv2.drawContours(raw_image, [approx], -1, BLACK, 4)
             x, y, w, h = cv2.boundingRect(approx)
             rect = ((x, y), (w, h))
