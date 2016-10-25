@@ -38,6 +38,8 @@ if __name__ == '__main__':
             if show(frame):
                 break
         capture.release()
+    elif len(sys.argv) == 2:
+        show_filtered()
     elif len(sys.argv) == 3:
         path = sys.argv[1]
         img = cv2.imread(path)
@@ -46,5 +48,4 @@ if __name__ == '__main__':
         output_path = sys.argv[2]
         cv2.imwrite(output_path, result)
     else:
-        show_filtered()
-
+        raise Exception('wrong arguments')
