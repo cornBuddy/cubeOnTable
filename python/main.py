@@ -10,12 +10,12 @@ from search import search_for_table_corners, filt
 def show(image):
     cv2.namedWindow('image', cv2.WINDOW_NORMAL)
     cv2.imshow('image', image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    end = cv2.waitKey(1) == 27
+    if end:
+        cv2.destroyAllWindows()
+    return end
 
-def search_plane_rectangle_on_image_and_draw_cube_on_it():
-    path = sys.argv[1]
-    raw_image = cv2.imread(path)
+def search_plane_rectangle_on_image_and_draw_cube_on_it(raw_image):
     table_corners = search_for_table_corners(raw_image)
     if table_corners is None:
         raise Exception('there is no table!')
@@ -31,8 +31,17 @@ def show_filtered():
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 3:
-        result = search_plane_rectangle_on_image_and_draw_cube_on_it()
+    if len(sys.argv) == 1:
+        capture = cv2.VideoCapture(0)
+        while True:
+            ret, frame = capture.read()
+            if show(frame):
+                break
+        capture.release()
+    elif len(sys.argv) == 3:
+        path = sys.argv[1]
+        img = cv2.imread(path)
+        result = search_plane_rectangle_on_image_and_draw_cube_on_it(img)
         show(result)
         output_path = sys.argv[2]
         cv2.imwrite(output_path, result)
