@@ -4,23 +4,8 @@ import numpy as np
 import cv2
 
 from drawing import draw_cube
-from search import search_for_table_corners, filt
-
-
-def show_frame(image):
-    cv2.namedWindow('image', cv2.WINDOW_NORMAL)
-    cv2.imshow('image', image)
-    end = cv2.waitKey(1) == 27
-    if end:
-        cv2.destroyAllWindows()
-    return end
-
-
-def show_image(image):
-    cv2.namedWindow('image', cv2.WINDOW_NORMAL)
-    cv2.imshow('image', image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+from search import search_for_table_corners
+from show import *
 
 
 def search_plane_rectangle_on_image_and_draw_cube_on_it(raw_image):
@@ -29,13 +14,6 @@ def search_plane_rectangle_on_image_and_draw_cube_on_it(raw_image):
         raise Exception('there is no table!')
     result = draw_cube(raw_image, table_corners)
     return result
-
-
-def show_filtered():
-    path = sys.argv[1]
-    raw_image = cv2.imread(path)
-    result = filt(raw_image)
-    show(result)
 
 
 if __name__ == '__main__':
