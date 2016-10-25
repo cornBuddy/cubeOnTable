@@ -34,8 +34,8 @@ def search_for_table_corners(raw_image):
         if len(approx) == 4:
             cv2.drawContours(raw_image, [approx], -1, BLACK, 4)
             x, y, w, h = cv2.boundingRect(approx)
-            rect = ((x, y), (x + w, y + h))
-            cv2.rectangle(raw_image, rect[0], rect[1], YELLOW, 2)
+            rect = ((x, y), (w, h))
+            cv2.rectangle(raw_image, rect[0], (x + w, y + h), YELLOW, 2)
             return np.float32(approx), rect
     return None
 
