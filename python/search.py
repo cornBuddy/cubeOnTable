@@ -46,6 +46,10 @@ def get_projection_points(raw_image, table_corners):
     return projection_points, corn2
 
 
+def search_for_tracked_object(image):
+    raise NotImplementedError()
+
+
 # private functions
 def _generate_camera_matrix(image):
     h, w = image.shape[:2]
