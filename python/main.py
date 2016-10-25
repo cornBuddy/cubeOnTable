@@ -24,7 +24,7 @@ def show_image(image):
 
 
 def search_plane_rectangle_on_image_and_draw_cube_on_it(raw_image):
-    table_corners = search_for_table_corners(raw_image)
+    table_corners = search_for_table_corners(raw_image)[0]
     if table_corners is None:
         raise Exception('there is no table!')
     result = draw_cube(raw_image, table_corners)
