@@ -10,6 +10,7 @@ IS_CLOSED = True
 DELTA = 0.01
 
 BLACK = (0, 0, 0)
+YELLOW = (0, 255, 255)
 
 TABLE_WIDTH = 1
 TABLE_HEIGHT = 2
@@ -32,6 +33,8 @@ def search_for_table_corners(raw_image):
         approx = cv2.approxPolyDP(cnt, DELTA * cnt_len, IS_CLOSED)
         if len(approx) == 4:
             cv2.drawContours(raw_image, [approx], -1, BLACK, 4)
+            x, y, w, h = cv2.boundingRect(approx)
+            cv2.rectangle(raw_image, (x, y), (x + w, y + h), YELLOW, 2)
             return np.float32(approx)
     return None
 
