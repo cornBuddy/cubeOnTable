@@ -34,7 +34,7 @@ if __name__ == '__main__':
     if len(sys.argv) == 1:
         capture = cv2.VideoCapture(0)
         while True:
-            ret, frame = capture.read()
+            frame = capture.read()[1]
             if show(frame):
                 break
         capture.release()
