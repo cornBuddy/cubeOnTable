@@ -13,14 +13,13 @@ def show(image):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-def main():
+def search_plane_rectangle_on_image_and_draw_cube_on_it():
     path = sys.argv[1]
     raw_image = cv2.imread(path)
     table_corners = search_for_table_corners(raw_image)
     if table_corners is None:
         raise Exception('there is no table!')
     result = draw_cube(raw_image, table_corners)
-    show(result)
     return result
 
 
@@ -33,7 +32,8 @@ def show_filtered():
 
 if __name__ == '__main__':
     if len(sys.argv) == 3:
-        result = main()
+        result = search_plane_rectangle_on_image_and_draw_cube_on_it()
+        show(result)
         output_path = sys.argv[2]
         cv2.imwrite(output_path, result)
     else:
