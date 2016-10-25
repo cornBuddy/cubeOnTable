@@ -42,24 +42,23 @@ if __name__ == '__main__':
     if len(sys.argv) == 1:
         capture = cv2.VideoCapture(0)
         corners = None
+        frame = None
         while True:
-            frame = capture.read()[1]
             while corners is None:
+                frame = capture.read()[1]
                 print('searching...')
                 corners = search_for_table_corners(frame)
             print('found!', corners)
+            break
         rect = corners[1]
         x, y = rect[0]
         w, h = rect[1]
-        roi = frame[x:w, y:h]
+        roi = frame[x:x + w, y:y + h]
         hsv_roi =  cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
-        mask = cv2.inRange(hsv_roi, np.array((0., 60.,32.)),
+        mask = cv2.inRange(hsv_roi, np.array((0., 60., 32.)),
                 np.array((180., 255., 255.)))
         roi_hist = cv2.calcHist([hsv_roi], [0], mask, [180], [0, 180])
         cv2.normalize(roi_hist, roi_hist, 0, 255, cv2.NORM_MINMAX)
-        while True:
-            frame = capture.read()[1]
-            # TODO: write some code
         capture.release()
     elif len(sys.argv) == 2:
         show_filtered()
