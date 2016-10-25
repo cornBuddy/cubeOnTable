@@ -7,13 +7,21 @@ from drawing import draw_cube
 from search import search_for_table_corners, filt
 
 
-def show(image):
+def show_frame(image):
     cv2.namedWindow('image', cv2.WINDOW_NORMAL)
     cv2.imshow('image', image)
     end = cv2.waitKey(1) == 27
     if end:
         cv2.destroyAllWindows()
     return end
+
+
+def show_image(image):
+    cv2.namedWindow('image', cv2.WINDOW_NORMAL)
+    cv2.imshow('image', image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 
 def search_plane_rectangle_on_image_and_draw_cube_on_it(raw_image):
     table_corners = search_for_table_corners(raw_image)
@@ -35,7 +43,7 @@ if __name__ == '__main__':
         capture = cv2.VideoCapture(0)
         while True:
             frame = capture.read()[1]
-            if show(frame):
+            if show_frame(frame):
                 break
         capture.release()
     elif len(sys.argv) == 2:
@@ -44,7 +52,7 @@ if __name__ == '__main__':
         path = sys.argv[1]
         img = cv2.imread(path)
         result = search_plane_rectangle_on_image_and_draw_cube_on_it(img)
-        show(result)
+        show_image(result)
         output_path = sys.argv[2]
         cv2.imwrite(output_path, result)
     else:
