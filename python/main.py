@@ -5,8 +5,10 @@ import cv2
 
 from search import (search_for_table_corners,
         search_plane_rectangle_on_image_and_draw_cube_on_it)
-from show import *
-from tracking import search_for_tracking_object, update_track_window
+from show import show_frame, show_image, show_filtered
+from tracking import (search_for_tracking_object, update_track_window,
+        to_absolete)
+from drawing import draw_cube
 
 
 if __name__ == '__main__':
@@ -26,13 +28,16 @@ if __name__ == '__main__':
             roi = frame[x:x + w, y:y + h]
             # relative to roi
             corners = search_for_table_corners(roi)
-            if corners is None:
+            if corners is not None:
+                abs_corners = to_absolete(corners, x, y)
+                print('abs_corners', abs_corners, '\n', '-' * 70)
+                result = draw_cube(frame, abs_corners)
+                esc_pressed = show_frame(result)
+                if esc_pressed:
+                    break
+            else:
                 print('table gone')
                 break
-            else:
-                # TODO: make corners absolete
-                # TODO: draw cube and show result
-                pass
     elif len(sys.argv) == 2:
         show_filtered()
     elif len(sys.argv) == 3:
