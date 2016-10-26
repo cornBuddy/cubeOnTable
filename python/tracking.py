@@ -40,6 +40,10 @@ def update_track_window(frame, old_window, roi_hist):
     return track_window
 
 
+def to_absolete(corners, x, y):
+    raise NotImplementedError()
+
+
 def _get_tracking_roi():
     cap = cv2.VideoCapture(0)
     corners = None
