@@ -17,7 +17,7 @@ if __name__ == '__main__':
         # Setup the termination criteria, either 10 iteration or move by
         # atleast 1 pt
         term_crit = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
-            1, 1)
+            10, 1)
         while True:
             frame = cap.read()[1]
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
