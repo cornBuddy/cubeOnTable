@@ -31,7 +31,7 @@ def search_for_tracking_object():
     return roi_hist, bounding_rect
 
 
-def update_track_window(frame, old_window):
+def update_track_window(frame, old_window, roi_hist):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     dst = cv2.calcBackProject([hsv], [0], roi_hist, [0, 180], 1)
     # apply meanshift to get the new location

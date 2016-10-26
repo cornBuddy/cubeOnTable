@@ -18,7 +18,8 @@ if __name__ == '__main__':
         # atleast 1 pt
         while True:
             frame = cap.read()[1]
-            track_window = update_track_window(frame)
+            track_window = update_track_window(frame, track_window,
+                    roi_hist)
             print('track_window', track_window, '\n', '-' * 70)
             # Draw it on image
             x, y, w, h = track_window
