@@ -19,7 +19,7 @@ TABLE_HEIGHT = 2
 
 
 def search_plane_rectangle_on_image_and_draw_cube_on_it(raw_image):
-    table_corners = search_for_table_corners(raw_image)[0]
+    table_corners = search_for_table_corners(raw_image)
     if table_corners is None:
         raise Exception('there is no table!')
     result = draw_cube(raw_image, table_corners)
@@ -44,10 +44,9 @@ def search_for_table_corners(raw_image):
         if len(approx) == 4 and cv2.contourArea(approx) > 100:
             cv2.drawContours(raw_image, [approx], -1, BLACK, 4)
             x, y, w, h = cv2.boundingRect(approx)
-            rect = ((x, y), (w, h))
-            cv2.rectangle(raw_image, rect[0], (x + w, y + h), YELLOW, 2)
-            return np.float32(approx), rect
-    return None, None
+            cv2.rectangle(raw_image, (x, y), (x + w, y + h), YELLOW, 2)
+            return np.float32(approx)
+    return None
 
 
 def get_projection_points(raw_image, table_corners):

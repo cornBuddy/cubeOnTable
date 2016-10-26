@@ -4,7 +4,7 @@ import numpy as np
 from search import search_for_table_corners
 
 
-RANGE_LOW = np.array((0., 60.,32.))
+RANGE_LOW = np.array((0., 60., 32.))
 RANGE_HIGH = np.array((180., 255., 255.))
 
 # b = none
@@ -20,18 +20,27 @@ RANGE_HIGH = np.array((180., 255., 255.))
 #   draw cube on updated table coordinates
 
 
-def get_tracking_roi(raw_image):
+def search_for_tracking_object():
+    '''Search for table and return information for tracking'''
+    roi, bounding_rect = _get_tracking_roi()
+    roi_hist = _normalize_roi(roi)
+    return roi_hist, bounding_rect
+
+
+def _get_tracking_roi():
     cap = cv2.VideoCapture(0)
-    bounding_rect = None
-    while bounding_rect is None:
+    corners = None
+    while corners is None:
         frame = cap.read()[1]
-        bounding_rect = search_for_table_corners(frame)[1]
-    (x, y), (w, h) = bounding_rect
+        corners = search_for_table_corners(frame)
+        bounding_rect = cv2.boundingRect(corners)
+    cap.release()
+    x, y, w, h = bounding_rect
     roi = frame[x:x + w, y:y + h]
     return roi, bounding_rect
 
 
-def normalize_roi(roi):
+def _normalize_roi(roi):
     hsv_roi =  cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv_roi, RANGE_LOW, RANGE_HIGH)
     roi_hist = cv2.calcHist([hsv_roi], [0], mask, [180], [0, 180])
