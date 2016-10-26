@@ -8,6 +8,9 @@ from search import search_for_table_corners
 RANGE_LOW = np.array((0., 0., 0.))
 RANGE_HIGH = np.array((255., 255., 255.))
 
+TERM_CRIT = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
+    10, 1)
+
 # b = none
 # while b is none
 #   frame <- capture from video camera
@@ -26,6 +29,15 @@ def search_for_tracking_object():
     roi, bounding_rect = _get_tracking_roi()
     roi_hist = _normalize_roi(roi)
     return roi_hist, bounding_rect
+
+
+def update_track_window(frame, old_window):
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    dst = cv2.calcBackProject([hsv], [0], roi_hist, [0, 180], 1)
+    # apply meanshift to get the new location
+    track_window = cv2.CamShift(dst, old_window,
+            TERM_CRIT)[1]
+    return track_window
 
 
 def _get_tracking_roi():

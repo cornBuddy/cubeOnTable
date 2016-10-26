@@ -6,7 +6,7 @@ import cv2
 from search import (search_for_table_corners,
         search_plane_rectangle_on_image_and_draw_cube_on_it)
 from show import *
-from tracking import search_for_tracking_object
+from tracking import search_for_tracking_object, update_track_window
 
 
 if __name__ == '__main__':
@@ -16,23 +16,15 @@ if __name__ == '__main__':
         cap = cv2.VideoCapture(0)
         # Setup the termination criteria, either 10 iteration or move by
         # atleast 1 pt
-        term_crit = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
-            10, 1)
         while True:
             frame = cap.read()[1]
-            hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            dst = cv2.calcBackProject([hsv], [0], roi_hist, [0, 180], 1)
-            # apply meanshift to get the new location
-            track_window = cv2.CamShift(dst, track_window,
-                    term_crit)[1]
+            track_window = update_track_window(frame)
             print('track_window', track_window, '\n', '-' * 70)
             # Draw it on image
             x, y, w, h = track_window
             res = cv2.rectangle(frame, (x, y), (x + w, y + h), 255, 2)
-            cv2.imshow('img2', res)
-            k = cv2.waitKey(60) & 0xff
-            if k == 27:
-                cv2.destroyAllWindows()
+            esc_pressed = show_frame(res)
+            if esc_pressed:
                 cap.release()
                 break
     elif len(sys.argv) == 2:
