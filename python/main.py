@@ -11,9 +11,6 @@ from show import *
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         # TODO: write some code
-        # corners are relative coordinates, inside in roi, get absolete
-        # roi should be a bit more than than default bounding rect value
-        # roi should be part of raw image, without any filter
         pass
     elif len(sys.argv) == 2:
         show_filtered()
