@@ -31,11 +31,13 @@ def _get_tracking_roi():
     cap = cv2.VideoCapture(0)
     corners = None
     while corners is None:
+        print('searching...')
         frame = cap.read()[1]
         corners = search_for_table_corners(frame)
         bounding_rect = cv2.boundingRect(corners)
     cap.release()
     x, y, w, h = bounding_rect
+    print('found!')
     roi = frame[x:x + w, y:y + h]
     return roi, bounding_rect
 
