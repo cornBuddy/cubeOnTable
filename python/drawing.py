@@ -9,6 +9,14 @@ GREEN = (0, 255, 0)
 RED = (0, 0, 255)
 
 
+def draw_cube(raw_image, table_corners):
+    projection_points, corners_subpxs = s.get_projection_points(raw_image,
+            table_corners)
+    canvas = _create_canvas(raw_image)
+    canvas = _draw(raw_image, corners_subpxs, projection_points)
+    return canvas
+
+
 def _draw(img, corners, imgpts):
     imgpts = np.int32(imgpts).reshape(-1, 2)
     # draw ground floor in green
@@ -25,9 +33,3 @@ def _create_canvas(image):
     return image.copy()
 
 
-def draw_cube(raw_image, table_corners):
-    projection_points, corners_subpxs = s.get_projection_points(raw_image,
-            table_corners)
-    canvas = _create_canvas(raw_image)
-    canvas = _draw(raw_image, corners_subpxs, projection_points)
-    return canvas
