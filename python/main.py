@@ -22,9 +22,9 @@ if __name__ == '__main__':
             frame = cap.read()[1]
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
             dst = cv2.calcBackProject([hsv], [0], roi_hist, [0, 180], 1)
+            show_image(dst)
             # apply meanshift to get the new location
-            # FIXME: track_window is static
-            track_window = cv2.meanShift(dst, track_window,
+            track_window = cv2.CamShift(dst, track_window,
                     term_crit)[1]
             print('track_window', track_window, '\n', '-' * 70)
             # Draw it on image

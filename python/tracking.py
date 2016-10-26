@@ -4,8 +4,9 @@ import numpy as np
 from search import search_for_table_corners
 
 
-RANGE_LOW = np.array((0., 60., 32.))
-RANGE_HIGH = np.array((180., 255., 255.))
+# FIXME: find better range values for better tracking
+RANGE_LOW = np.array((0., 0., 0.))
+RANGE_HIGH = np.array((255., 255., 255.))
 
 # b = none
 # while b is none
