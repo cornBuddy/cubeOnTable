@@ -23,11 +23,16 @@ if __name__ == '__main__':
             print('track_window', track_window, '\n', '-' * 70)
             # Draw it on image
             x, y, w, h = track_window
-            res = cv2.rectangle(frame, (x, y), (x + w, y + h), 255, 2)
-            esc_pressed = show_frame(res)
-            if esc_pressed:
-                cap.release()
+            roi = frame[x:x + w, y:y + h]
+            # relative to roi
+            corners = search_for_table_corners(roi)
+            if corners is None:
+                print('table gone')
                 break
+            else:
+                # TODO: make corners absolete
+#               # TODO: draw cube and show result
+                pass
     elif len(sys.argv) == 2:
         show_filtered()
     elif len(sys.argv) == 3:
