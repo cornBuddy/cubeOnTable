@@ -47,7 +47,7 @@ def search_for_table_corners(raw_image):
             rect = ((x, y), (w, h))
             cv2.rectangle(raw_image, rect[0], (x + w, y + h), YELLOW, 2)
             return np.float32(approx), rect
-    return None
+    return None, None
 
 
 def get_projection_points(raw_image, table_corners):
