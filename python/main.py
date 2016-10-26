@@ -31,7 +31,7 @@ if __name__ == '__main__':
                 break
             else:
                 # TODO: make corners absolete
-#               # TODO: draw cube and show result
+                # TODO: draw cube and show result
                 pass
     elif len(sys.argv) == 2:
         show_filtered()
