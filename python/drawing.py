@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 
-from search import get_projection_points
+import search as s
 
 
 BLUE = (255, 0, 0)
@@ -26,7 +26,7 @@ def _create_canvas(image):
 
 
 def draw_cube(raw_image, table_corners):
-    projection_points, corners_subpxs = get_projection_points(raw_image,
+    projection_points, corners_subpxs = s.get_projection_points(raw_image,
             table_corners)
     canvas = _create_canvas(raw_image)
     canvas = _draw(raw_image, corners_subpxs, projection_points)

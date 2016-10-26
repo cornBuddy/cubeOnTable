@@ -1,6 +1,8 @@
 import numpy as np
 import cv2
 
+from drawing import draw_cube
+
 
 CANNY_LOW = 30
 CANNY_HIGH = 200
@@ -16,6 +18,14 @@ TABLE_WIDTH = 1
 TABLE_HEIGHT = 2
 
 
+def search_plane_rectangle_on_image_and_draw_cube_on_it(raw_image):
+    table_corners = search_for_table_corners(raw_image)[0]
+    if table_corners is None:
+        raise Exception('there is no table!')
+    result = draw_cube(raw_image, table_corners)
+    return result
+
+
 def filt(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     edged = cv2.Canny(image, CANNY_LOW, CANNY_HIGH)
@@ -23,28 +33,21 @@ def filt(image):
     return blured
 
 
-def search_for_table_corners(raw_image, roi=None):
-    if roi is None:
-        filtered = filt(raw_image)
-        _, cnts, _ = cv2.findContours(filtered,
-                cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
-        for cnt in cnts:
-            cnt_len = cv2.arcLength(cnt, IS_CLOSED)
-            approx = cv2.approxPolyDP(cnt, DELTA * cnt_len, IS_CLOSED)
-            if len(approx) == 4 and cv2.contourArea(approx) > 100:
-                cv2.drawContours(raw_image, [approx], -1, BLACK, 4)
-                x, y, w, h = cv2.boundingRect(approx)
-                rect = ((x, y), (w, h))
-                cv2.rectangle(raw_image, rect[0], (x + w, y + h), YELLOW, 2)
-                return np.float32(approx), rect
-        return None
-    else:
-        # corners are relative coordinates, inside in roi, get absolete
-        # roi should be a bit more than than default bounding rect value
-        # roi should be part of raw image, without any filter
-        corners, rect = search_for_table_corners(roi)
-        raise NotImplementedError()
+def search_for_table_corners(raw_image):
+    filtered = filt(raw_image)
+    _, cnts, _ = cv2.findContours(filtered,
+            cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
+    for cnt in cnts:
+        cnt_len = cv2.arcLength(cnt, IS_CLOSED)
+        approx = cv2.approxPolyDP(cnt, DELTA * cnt_len, IS_CLOSED)
+        if len(approx) == 4 and cv2.contourArea(approx) > 100:
+            cv2.drawContours(raw_image, [approx], -1, BLACK, 4)
+            x, y, w, h = cv2.boundingRect(approx)
+            rect = ((x, y), (w, h))
+            cv2.rectangle(raw_image, rect[0], (x + w, y + h), YELLOW, 2)
+            return np.float32(approx), rect
+    return None
 
 
 def get_projection_points(raw_image, table_corners):

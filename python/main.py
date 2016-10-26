@@ -3,22 +3,17 @@ import sys
 import numpy as np
 import cv2
 
-from drawing import draw_cube
-from search import search_for_table_corners
+from search import (search_for_table_corners,
+        search_plane_rectangle_on_image_and_draw_cube_on_it)
 from show import *
-
-
-def search_plane_rectangle_on_image_and_draw_cube_on_it(raw_image):
-    table_corners = search_for_table_corners(raw_image)[0]
-    if table_corners is None:
-        raise Exception('there is no table!')
-    result = draw_cube(raw_image, table_corners)
-    return result
 
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         # TODO: write some code
+        # corners are relative coordinates, inside in roi, get absolete
+        # roi should be a bit more than than default bounding rect value
+        # roi should be part of raw image, without any filter
         pass
     elif len(sys.argv) == 2:
         show_filtered()
